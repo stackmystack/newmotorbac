@@ -1,0 +1,280 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <Properties>
+    <Property name="name" type="java.lang.String" value="Form" noResource="true"/>
+  </Properties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="2"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jButtonUpdateConcretePolicy" alignment="0" min="-2" max="-2" attributes="1"/>
+                  <Group type="102" attributes="0">
+                      <Component id="jCheckBoxAutomaticUpdates" min="-2" max="-2" attributes="1"/>
+                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <Component id="jPanel1" alignment="0" min="-2" pref="123" max="-2" attributes="1"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jTabbedPaneSimulation" pref="171" max="32767" attributes="2"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="103" alignment="0" groupAlignment="1" attributes="0">
+              <Component id="jTabbedPaneSimulation" alignment="0" pref="313" max="32767" attributes="2"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="jPanel1" min="-2" pref="217" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jButtonUpdateConcretePolicy" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jCheckBoxAutomaticUpdates" min="-2" pref="44" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                          <Component id="jLabel7" min="-2" pref="9" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="jPanel1">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Simulation date">
+              <Property name="titleX" resourceKey="jPanel1.border.title"/>
+            </TitledBorder>
+          </Border>
+        </Property>
+        <Property name="name" type="java.lang.String" value="jPanel1" noResource="true"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="jSpinnerMinute" alignment="0" pref="60" max="32767" attributes="1"/>
+                              <Component id="jSpinnerDay" alignment="0" pref="60" max="32767" attributes="1"/>
+                              <Component id="jSpinnerHour" alignment="0" pref="60" max="32767" attributes="1"/>
+                              <Component id="jSpinnerMonth" alignment="0" pref="60" max="32767" attributes="0"/>
+                              <Component id="jSpinnerSecond" alignment="1" pref="60" max="32767" attributes="0"/>
+                              <Component id="jSpinnerYear" alignment="0" min="-2" pref="60" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Component id="jButtonSetClock" alignment="0" pref="113" max="32767" attributes="1"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jSpinnerHour" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jSpinnerMinute" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jSpinnerSecond" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jSpinnerDay" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jSpinnerMonth" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jSpinnerYear" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jButtonSetClock" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabel1">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="jLabel1.text"/>
+            <Property name="name" type="java.lang.String" value="jLabel1" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JSpinner" name="jSpinnerHour">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="name" type="java.lang.String" value="jSpinnerHour" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel2">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="jLabel2.text"/>
+            <Property name="name" type="java.lang.String" value="jLabel2" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JSpinner" name="jSpinnerMinute">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="name" type="java.lang.String" value="jSpinnerMinute" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel3">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="jLabel3.text"/>
+            <Property name="name" type="java.lang.String" value="jLabel3" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JSpinner" name="jSpinnerSecond">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="name" type="java.lang.String" value="jSpinnerSecond" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel4">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="jLabel4.text"/>
+            <Property name="name" type="java.lang.String" value="jLabel4" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JSpinner" name="jSpinnerDay">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="name" type="java.lang.String" value="jSpinnerDay" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel5">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="jLabel5.text"/>
+            <Property name="name" type="java.lang.String" value="jLabel5" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JSpinner" name="jSpinnerMonth">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="name" type="java.lang.String" value="jSpinnerMonth" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel6">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="text" type="java.lang.String" resourceKey="jLabel6.text"/>
+            <Property name="name" type="java.lang.String" value="jLabel6" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JSpinner" name="jSpinnerYear">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="name" type="java.lang.String" value="jSpinnerYear" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButtonSetClock">
+          <Properties>
+            <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+            <Property name="icon" type="javax.swing.Icon" resourceKey="jButtonSetClock.icon"/>
+            <Property name="text" type="java.lang.String" resourceKey="jButtonSetClock.text"/>
+            <Property name="name" type="java.lang.String" value="jButtonSetClock" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSetClockActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JButton" name="jButtonUpdateConcretePolicy">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+        <Property name="icon" type="javax.swing.Icon" resourceKey="jButtonUpdateConcretePolicy.icon"/>
+        <Property name="text" type="java.lang.String" resourceKey="jButtonUpdateConcretePolicy.text"/>
+        <Property name="name" type="java.lang.String" value="jButtonUpdateConcretePolicy" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonUpdateConcretePolicyActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="jCheckBoxAutomaticUpdates">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="jCheckBoxAutomaticUpdates.text"/>
+        <Property name="name" type="java.lang.String" value="jCheckBoxAutomaticUpdates" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxAutomaticUpdatesActionPerformed"/>
+      </Events>
+    </Component>
+    <Container class="javax.swing.JTabbedPane" name="jTabbedPaneSimulation">
+      <Properties>
+        <Property name="name" type="java.lang.String" value="jTabbedPaneSimulation" noResource="true"/>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+    </Container>
+    <Component class="javax.swing.JLabel" name="jLabel7">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+        <Property name="text" type="java.lang.String" resourceKey="jLabel7.text"/>
+        <Property name="name" type="java.lang.String" value="jLabel7" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel8">
+      <Properties>
+        <Property name="font" type="java.awt.Font" resourceKey="jSpinnerMinute.font"/>
+        <Property name="text" type="java.lang.String" resourceKey="jLabel8.text"/>
+        <Property name="name" type="java.lang.String" value="jLabel8" noResource="true"/>
+      </Properties>
+    </Component>
+  </SubComponents>
+</Form>
