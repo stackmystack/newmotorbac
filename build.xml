@@ -75,6 +75,6 @@
         <copy todir="${dist.jar.dir}">
             <fileset dir="scripts" file="start.bat"/>
             <fileset dir="scripts" file="start.sh"/>
-        </copy>        
+        </copy>
     </target>
 </project>
