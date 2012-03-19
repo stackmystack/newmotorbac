@@ -82,7 +82,7 @@ public class NewMotorbacView extends FrameView {
         }
         // initialize OrBAC core
         core = COrbacCore.GetTheInstance(absPath);
-
+        
         // set application icon
         URL imgURL = NewMotorbacView.class.getResource("/newmotorbac/resources/orbee.png");
 
