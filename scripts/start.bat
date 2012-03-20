@@ -1,1 +1,1 @@
-java -classpath lib/'*' -jar motorbac2.jar >> ./logs/log.%date%.%time%.txt 2>&1
+java -classpath lib/'*' -jar newmotorbac.jar >> ./logs/log.%date%.%time%.txt 2>&1

@@ -73,8 +73,7 @@
     -->
     <target name="-post-jar">
         <copy todir="${dist.jar.dir}">
-            <fileset dir="scripts" file="start.bat"/>
-            <fileset dir="scripts" file="start.sh"/>
+            <fileset dir="scripts" includes="*" />
         </copy>
     </target>
 </project>
