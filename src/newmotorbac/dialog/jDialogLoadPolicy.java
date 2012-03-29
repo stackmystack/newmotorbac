@@ -9,6 +9,7 @@ import orbac.COrbacCore;
 import orbac.exception.CContextTypeNotFoundException;
 import orbac.exception.COrbacException;
 import orbac.service.IPolicyProcessorService;
+import orbac.xmlImpl.XmlOrbacPolicy;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -54,6 +55,7 @@ public class jDialogLoadPolicy extends javax.swing.JDialog {
             this.dialog = dialog;
         }
 
+        @Override
         public void run() {
             try {
                 dialog.SetLabelLoadingPolicyState(true);
@@ -82,21 +84,22 @@ public class jDialogLoadPolicy extends javax.swing.JDialog {
                 dialog.SetLabelInferPolicyState(true);
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
-            } finally {
-                for (Bundle selectedPlugin : COrbacCore.GetPlugins()) {
-                    BundleContext context = selectedPlugin.getBundleContext();
-                    ServiceReference[] serviceRefs = selectedPlugin.getRegisteredServices();
-                    for (int i = 0; i < serviceRefs.length; i++) {
-                        ((IPolicyProcessorService) context.getService(serviceRefs[i])).ProcessPolicy(policy, file.toString());
-                    }
-                }
                 try {
+                    policy = COrbacCore.GetTheInstance().CreatePolicy("temp", XmlOrbacPolicy.class);
+                    for (Bundle selectedPlugin : COrbacCore.GetPlugins()) {
+                        BundleContext context = selectedPlugin.getBundleContext();
+                        ServiceReference[] serviceRefs = selectedPlugin.getRegisteredServices();
+                        for (int i = 0; i < serviceRefs.length; i++) {
+                            ((IPolicyProcessorService) context.getService(serviceRefs[i])).ProcessPolicy(policy, file.toString());
+                        }
+                    }
                     policy.ReadPolicyFile(file.toString());
                 } catch (COrbacException ex1) {
                     Logger.getLogger(jDialogLoadPolicy.class.getName()).log(Level.SEVERE, null, ex1);
                 } catch (Exception ex1) {
                     Logger.getLogger(jDialogLoadPolicy.class.getName()).log(Level.SEVERE, null, ex1);
                 }
+            } finally {
                 // destroy dialog
                 dialog.dispose();
             }
