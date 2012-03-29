@@ -111,6 +111,7 @@ public class PanelConcreteEntity extends javax.swing.JPanel implements ActionLis
         jListEntities.setSelectedValue(entity, true);
     }
     
+    @Override
     public void actionPerformed(java.awt.event.ActionEvent evt)
     {
         if ( evt.getSource() instanceof JMenuItem )
@@ -319,11 +320,6 @@ public class PanelConcreteEntity extends javax.swing.JPanel implements ActionLis
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceMap.getString("jScrollPane1.border.title"))); // NOI18N
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        jListEntities.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         jListEntities.setDragEnabled(true);
         jListEntities.setMaximumSize(new java.awt.Dimension(100, 140));
         jListEntities.setName("jListEntities"); // NOI18N
@@ -407,7 +403,7 @@ public class PanelConcreteEntity extends javax.swing.JPanel implements ActionLis
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE))
+                        .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -415,7 +411,7 @@ public class PanelConcreteEntity extends javax.swing.JPanel implements ActionLis
                             .addComponent(jButtonDeleteEntity, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButtonEditEntity, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -786,13 +782,13 @@ public class PanelConcreteEntity extends javax.swing.JPanel implements ActionLis
                     switch ( entityType )
                     {
                         case AbstractOrbacPolicy.TYPE_SUBJECT:
-                            abstractEntities = thisContext.thePolicy.GetAssociatedRolesList(thisContext.currentOrganization, !thisContext.adorbacViewActive);
+                            abstractEntities = thisContext.thePolicy.GetRoles(thisContext.currentOrganization, !thisContext.adorbacViewActive);
                             break;
                         case AbstractOrbacPolicy.TYPE_ACTION:
-                            abstractEntities = thisContext.thePolicy.GetAssociatedActivitiesList(thisContext.currentOrganization, !thisContext.adorbacViewActive);
+                            abstractEntities = thisContext.thePolicy.GetActivities(thisContext.currentOrganization, !thisContext.adorbacViewActive);
                             break;
                         case AbstractOrbacPolicy.TYPE_OBJECT:
-                            abstractEntities = thisContext.thePolicy.GetAssociatedViewsList(thisContext.currentOrganization, !thisContext.adorbacViewActive);
+                            abstractEntities = thisContext.thePolicy.GetViews(thisContext.currentOrganization, !thisContext.adorbacViewActive);
                             break;
                     }
                     Iterator<String> ir = abstractEntities.iterator();
@@ -843,13 +839,13 @@ public class PanelConcreteEntity extends javax.swing.JPanel implements ActionLis
             switch ( entityType )
             {
                 case AbstractOrbacPolicy.TYPE_SUBJECT:
-                    abstractEntities = thisContext.thePolicy.GetAssociatedRolesList(thisContext.currentOrganization, !thisContext.adorbacViewActive);
+                    abstractEntities = thisContext.thePolicy.GetRoles(thisContext.currentOrganization, !thisContext.adorbacViewActive);
                     break;
                 case AbstractOrbacPolicy.TYPE_ACTION:
-                    abstractEntities = thisContext.thePolicy.GetAssociatedActivitiesList(thisContext.currentOrganization, !thisContext.adorbacViewActive);
+                    abstractEntities = thisContext.thePolicy.GetActivities(thisContext.currentOrganization, !thisContext.adorbacViewActive);
                     break;
                 case AbstractOrbacPolicy.TYPE_OBJECT:
-                    abstractEntities = thisContext.thePolicy.GetAssociatedViewsList(thisContext.currentOrganization, !thisContext.adorbacViewActive);
+                    abstractEntities = thisContext.thePolicy.GetViews(thisContext.currentOrganization, !thisContext.adorbacViewActive);
                     break;
             }
             Iterator<String> ir = abstractEntities.iterator();

@@ -17,6 +17,7 @@ import java.awt.Component;
 import java.awt.Point;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
@@ -101,6 +102,12 @@ public class PanelConcreteRules extends javax.swing.JPanel {
 
     public void FillSecurityRulesTable()
     {
+        CConcretePermission[] empty1 = new CConcretePermission[0];
+        CConcreteProhibition[] empty2 = new CConcreteProhibition[0];
+        CConcreteObligation[] empty3 = new CConcreteObligation[0];
+        CAdorbacConcretePermission[] empty4 = new CAdorbacConcretePermission[0];
+        securityRulesModel.SetData( empty1, empty2, empty3, empty4 );
+        
         Set<CConcretePermission> permissions = thisContext.thePolicy.GetConcretePermissions();
         Set<CConcreteProhibition> prohibitions = thisContext.thePolicy.GetConcreteProhibitions();
         Set<CConcreteObligation> obligations = thisContext.thePolicy.GetConcreteObligations();

@@ -18,6 +18,7 @@ import java.awt.Point;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
@@ -93,18 +94,9 @@ public class PanelEntityDefinitions extends javax.swing.JPanel {
             {
                 String row[] = new String[3];
                 CEntityDefinition cd = icd.next();
-                if ( cd instanceof CThreatEntityDefinition )
-                {
-                    row[0] = cd.GetName();
-                    row[1] = "threat role definition";
-                    row[2] = "dynamic organization";
-                }
-                else
-                {
-                    row[0] = cd.GetName();
-                    row[1] = "role definition";
-                    row[2] = cd.GetAbstractEntity();
-                }
+                row[0] = cd.GetName();
+                row[1] = cd instanceof CThreatEntityDefinition ? "threat role definition" : "role definition";
+                row[2] = cd.GetAbstractEntity();
                 model.addRow(row);
             }
 
@@ -114,18 +106,9 @@ public class PanelEntityDefinitions extends javax.swing.JPanel {
             {
                 String row[] = new String[3];
                 CEntityDefinition cd = icd.next();
-                if ( cd instanceof CThreatEntityDefinition )
-                {
-                    row[0] = cd.GetName();
-                    row[1] = "threat activity definition";
-                    row[2] = "dynamic organization";
-                }
-                else
-                {
-                    row[0] = cd.GetName();
-                    row[1] = "activity definition";
-                    row[2] = cd.GetAbstractEntity();
-                }
+                row[0] = cd.GetName();
+                row[1] = cd instanceof CThreatEntityDefinition ? "threat activity definition" : "activity definition";
+                row[2] = cd.GetAbstractEntity();
                 model.addRow(row);
             }
 
@@ -135,18 +118,9 @@ public class PanelEntityDefinitions extends javax.swing.JPanel {
             {
                 String row[] = new String[3];
                 CEntityDefinition cd = icd.next();
-                if ( cd instanceof CThreatEntityDefinition )
-                {
-                    row[0] = cd.GetName();
-                    row[1] = "threat view definition";
-                    row[2] = "dynamic organization";
-                }
-                else
-                {
-                    row[0] = cd.GetName();
-                    row[1] = "view definition";
-                    row[2] = cd.GetAbstractEntity();
-                }
+                row[0] = cd.GetName();
+                row[1] = cd instanceof CThreatEntityDefinition ? "threat view definition" : "view definition";
+                row[2] = cd.GetAbstractEntity();
                 model.addRow(row);
             }
         }
@@ -506,17 +480,36 @@ public class PanelEntityDefinitions extends javax.swing.JPanel {
 }//GEN-LAST:event_jButtonEditDefinitionActionPerformed
 
     private void jButtonAddEntityDefinitionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddEntityDefinitionActionPerformed
-     	// ask entity definition name and type
-        jDialogAddEntityDefinition createEntityDef = new jDialogAddEntityDefinition(findActiveFrame(), true, thisContext.thePolicy);
+     	                                           
+        // retrieve supported context types
+        List<String> languagesTypes = thisContext.thePolicy.GetEntityDefinitionManager().GetSupportedEntityDefinitionTypes();
+        
+        // ask entity definition name and type
+        jDialogAddEntityDefinition createEntityDef = new jDialogAddEntityDefinition(findActiveFrame(), true, thisContext.thePolicy, languagesTypes);
         createEntityDef.setLocationRelativeTo(findActiveFrame());
         NewMotorbacApp.getApplication().show(createEntityDef);
         if ( createEntityDef.canceled == true ) return;
         try
         {
             // create entity definition
-            thisContext.thePolicy.CreateEntityDefinition(createEntityDef.GetEntityDefinitionName(),
-                                                         createEntityDef.GetEntityName(),
-                                                         createEntityDef.GetEntityDefinitionType());
+            switch ( createEntityDef.GetDefinitionType() )
+            {
+                case 0:// roles
+                    thisContext.thePolicy.CreateRoleDefinition(createEntityDef.GetEntityDefinitionName(),
+                                                             createEntityDef.GetEntityName(),
+                                                             createEntityDef.GetEntityDefinitionLanguage());
+                    break;
+                case 1:// activities
+                    thisContext.thePolicy.CreateActivityDefinition(createEntityDef.GetEntityDefinitionName(),
+                                                             createEntityDef.GetEntityName(),
+                                                             createEntityDef.GetEntityDefinitionLanguage());
+                    break;
+                case 2:// views
+                    thisContext.thePolicy.CreateViewDefinition(createEntityDef.GetEntityDefinitionName(),
+                                                             createEntityDef.GetEntityName(),
+                                                             createEntityDef.GetEntityDefinitionLanguage());
+                    break;
+            }
 
             // push policy on undo/redo stack
             thisContext.panelPolicy.PushPolicy();

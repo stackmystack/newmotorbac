@@ -66,7 +66,6 @@ public class jDialogAddContext extends javax.swing.JDialog {
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
 
-        jComboBoxContextType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBoxContextType.setName("jComboBoxContextType"); // NOI18N
 
         jButtonCancel.setText(resourceMap.getString("jButtonCancel.text")); // NOI18N
@@ -109,7 +108,7 @@ public class jDialogAddContext extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextFieldContextName, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jComboBoxContextType, javax.swing.GroupLayout.Alignment.TRAILING, 0, 276, Short.MAX_VALUE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(301, Short.MAX_VALUE)
                 .addComponent(jButtonOk)
@@ -119,7 +118,7 @@ public class jDialogAddContext extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel4)
-                .addContainerGap(290, Short.MAX_VALUE))
+                .addContainerGap(297, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

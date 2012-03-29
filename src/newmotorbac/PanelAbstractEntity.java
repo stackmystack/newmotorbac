@@ -529,8 +529,8 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
                     for ( CActivityAssignment aai : aa )
                     {
                         String[] data = new String[2];
-                        data[0] = aai.action;
-                        data[1] = aai.org;
+                        data[0] = aai.GetAction();
+                        data[1] = aai.GetOrganization();
                         m.addRow(data);
                     }
                     break;
@@ -540,8 +540,8 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
                     for ( CViewAssignment vai : va )
                     {
                         String[] data = new String[2];
-                        data[0] = vai.object;
-                        data[1] = vai.org;
+                        data[0] = vai.GetObject();
+                        data[1] = vai.GetOrganization();
                         m.addRow(data);
                     }
                     break;

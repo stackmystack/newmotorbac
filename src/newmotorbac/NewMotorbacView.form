@@ -24,8 +24,8 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jToolBarControls" alignment="0" pref="501" max="32767" attributes="0"/>
-              <Component id="jTabbedPanePolicies" alignment="1" pref="501" max="32767" attributes="0"/>
+              <Component id="jToolBarControls" alignment="0" pref="528" max="32767" attributes="0"/>
+              <Component id="jTabbedPanePolicies" alignment="1" pref="528" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -124,6 +124,29 @@
                 <Property name="verticalTextPosition" type="int" value="3"/>
               </Properties>
             </Component>
+            <Component class="javax.swing.JButton" name="jButtonExport">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="newmotorbac.NewMotorbacView" id="ExportPolicy" methodName="ExportPolicy"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="jButtonExport.icon"/>
+                <Property name="text" type="java.lang.String" resourceKey="jButtonExport.text"/>
+                <Property name="toolTipText" type="java.lang.String" resourceKey="jButtonExport.toolTipText"/>
+                <Property name="focusable" type="boolean" value="false"/>
+                <Property name="horizontalTextPosition" type="int" value="0"/>
+                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[34, 34]"/>
+                </Property>
+                <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[34, 34]"/>
+                </Property>
+                <Property name="name" type="java.lang.String" value="jButtonExport" noResource="true"/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[34, 34]"/>
+                </Property>
+                <Property name="verticalTextPosition" type="int" value="3"/>
+              </Properties>
+            </Component>
             <Component class="javax.swing.JButton" name="jButtonUndo">
               <Properties>
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
@@ -154,7 +177,6 @@
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" resourceKey="jButtonRefresh.icon"/>
                 <Property name="toolTipText" type="java.lang.String" resourceKey="jButtonRefresh.toolTipText"/>
-                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
                 <Property name="name" type="java.lang.String" value="jButtonRefresh" noResource="true"/>
@@ -281,6 +303,9 @@
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="newmotorbac.NewMotorbacView" id="createPolicy" methodName="createPolicy"/>
                 </Property>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+N"/>
+                </Property>
                 <Property name="text" type="java.lang.String" resourceKey="jMenuItemNew.text"/>
                 <Property name="toolTipText" type="java.lang.String" resourceKey="jMenuItemNew.toolTipText"/>
                 <Property name="name" type="java.lang.String" value="jMenuItemNew" noResource="true"/>
@@ -288,6 +313,11 @@
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
               <Properties>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                    <EtchetBorder/>
+                  </Border>
+                </Property>
                 <Property name="name" type="java.lang.String" value="jSeparator1" noResource="true"/>
               </Properties>
             </MenuItem>
@@ -296,13 +326,21 @@
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                   <action class="newmotorbac.NewMotorbacView" id="ClosePolicy" methodName="ClosePolicy"/>
                 </Property>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+X"/>
+                </Property>
                 <Property name="text" type="java.lang.String" resourceKey="jMenuItemClose.text"/>
                 <Property name="toolTipText" type="java.lang.String" resourceKey="jMenuItemClose.toolTipText"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
               <Properties>
-                <Property name="name" type="java.lang.String" value="jSeparator2" noResource="true"/>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                    <EtchetBorder/>
+                  </Border>
+                </Property>
+                <Property name="name" type="java.lang.String" value="jSeparator3" noResource="true"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemOpen">
@@ -318,6 +356,12 @@
                 <Property name="name" type="java.lang.String" value="jMenuItemOpen" noResource="true"/>
               </Properties>
             </MenuItem>
+            <Menu class="javax.swing.JMenu" name="jMenuRecentPolicies">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="jMenuRecentPolicies.text"/>
+                <Property name="name" type="java.lang.String" value="jMenuRecentPolicies" noResource="true"/>
+              </Properties>
+            </Menu>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemSave">
               <Properties>
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
@@ -340,13 +384,33 @@
                 <Property name="name" type="java.lang.String" value="jMenuItemSaveAs" noResource="true"/>
               </Properties>
             </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemExport">
               <Properties>
-                <Property name="name" type="java.lang.String" value="jSeparator4" noResource="true"/>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="newmotorbac.NewMotorbacView" id="ExportPolicy" methodName="ExportPolicy"/>
+                </Property>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+E"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="jMenuItemExport.text"/>
+                <Property name="name" type="java.lang.String" value="jMenuItemExport" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
+              <Properties>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                    <EtchetBorder/>
+                  </Border>
+                </Property>
+                <Property name="name" type="java.lang.String" value="jSeparator2" noResource="true"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemProperties">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+P"/>
+                </Property>
                 <Property name="text" type="java.lang.String" resourceKey="jMenuItemProperties.text"/>
                 <Property name="toolTipText" type="java.lang.String" resourceKey="jMenuItemProperties.toolTipText"/>
               </Properties>
@@ -354,9 +418,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemPropertiesActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
               <Properties>
-                <Property name="name" type="java.lang.String" value="jSeparator3" noResource="true"/>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                    <EtchetBorder/>
+                  </Border>
+                </Property>
+                <Property name="name" type="java.lang.String" value="jSeparator4" noResource="true"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemExit">
@@ -448,6 +517,9 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemOnlineManual">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Alt+M"/>
+                </Property>
                 <Property name="text" type="java.lang.String" resourceKey="jMenuItemOnlineManual.text"/>
               </Properties>
               <Events>

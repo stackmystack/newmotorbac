@@ -48,6 +48,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import newmotorbac.dialog.JDialogExportPolicy;
 import newmotorbac.dialog.jDialogClassEditor;
 import newmotorbac.dialog.jDialogDefinePassword;
 import newmotorbac.dialog.jDialogLoadPolicy;
@@ -901,6 +902,15 @@ public class PanelPolicy extends javax.swing.JPanel implements ActionListener {
             return false;
         }
         return true;
+    }
+    
+    public void ExportPolicy()
+    {
+        // display modal dialog box
+        JFrame mainFrame = NewMotorbacApp.getApplication().getMainFrame();
+        JDialogExportPolicy newPolicyDialogBox = new JDialogExportPolicy(mainFrame, true, thisContext.thePolicy);
+        newPolicyDialogBox.setLocationRelativeTo(mainFrame);
+        NewMotorbacApp.getApplication().show(newPolicyDialogBox);
     }
     
     // called before closing the tab

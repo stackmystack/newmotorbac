@@ -1,6 +1,7 @@
 package newmotorbac.dialog;
 
 
+import java.util.List;
 import javax.swing.JOptionPane;
 import orbac.AbstractOrbacPolicy;
 import orbac.exception.COrbacException;
@@ -27,7 +28,7 @@ public class jDialogAddEntityDefinition extends javax.swing.JDialog {
     private AbstractOrbacPolicy policy;
 
     /** Creates new form jDialogAddEntityDefinition */
-    public jDialogAddEntityDefinition(java.awt.Frame parent, boolean modal, AbstractOrbacPolicy policy) {
+    public jDialogAddEntityDefinition(java.awt.Frame parent, boolean modal, AbstractOrbacPolicy policy, List<String> languagesTypes) {
         super(parent, modal);
         initComponents();
 
@@ -40,7 +41,9 @@ public class jDialogAddEntityDefinition extends javax.swing.JDialog {
         jComboBoxEntityType.setSelectedIndex(1);
         jComboBoxEntityType.setSelectedIndex(0);
 
-        // TODO: fill entity definition types
+        // fill entity definition types
+        for ( String l : languagesTypes )
+            jComboBoxDefinitionLanguage.addItem(l);
     }
 
     /** This method is called from within the constructor to
@@ -68,7 +71,6 @@ public class jDialogAddEntityDefinition extends javax.swing.JDialog {
         setName("Form"); // NOI18N
         setResizable(false);
 
-        jComboBoxDefinitionLanguage.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Prova (declarative)", "BeanShell (imperative)" }));
         jComboBoxDefinitionLanguage.setName("jComboBoxDefinitionLanguage"); // NOI18N
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(newmotorbac.NewMotorbacApp.class).getContext().getResourceMap(jDialogAddEntityDefinition.class);
@@ -135,9 +137,9 @@ public class jDialogAddEntityDefinition extends javax.swing.JDialog {
                             .addComponent(jLabel3))
                         .addGap(34, 34, 34)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBoxDefinitionLanguage, javax.swing.GroupLayout.Alignment.TRAILING, 0, 243, Short.MAX_VALUE)
-                            .addComponent(jComboBoxEntity, 0, 243, Short.MAX_VALUE)
-                            .addComponent(jComboBoxEntityType, 0, 243, Short.MAX_VALUE))))
+                            .addComponent(jComboBoxDefinitionLanguage, javax.swing.GroupLayout.Alignment.TRAILING, 0, 246, Short.MAX_VALUE)
+                            .addComponent(jComboBoxEntity, 0, 246, Short.MAX_VALUE)
+                            .addComponent(jComboBoxEntityType, 0, 246, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -189,7 +191,7 @@ public class jDialogAddEntityDefinition extends javax.swing.JDialog {
         jComboBoxEntity.removeAllItems();
         try
         {
-            switch ( jComboBoxEntityType .getSelectedIndex() )
+            switch ( jComboBoxEntityType.getSelectedIndex() )
             {
                 case 0:// roles
                     for ( String r : policy.GetRolesList(false) )
@@ -207,6 +209,7 @@ public class jDialogAddEntityDefinition extends javax.swing.JDialog {
                     jLabelAssociatedEntity.setText("Associated view:");
                     break;
             }
+            
         }
         catch ( COrbacException e )
         {
@@ -221,28 +224,7 @@ public class jDialogAddEntityDefinition extends javax.swing.JDialog {
     }
     public String GetEntityDefinitionType()
     {
-        String selectedType = (String)jComboBoxEntityType.getSelectedItem();
-        String languageType = (String)jComboBoxDefinitionLanguage.getSelectedItem();
-        // TODO: change this when the entity definition factory implementation is ready
-        if ( selectedType.equals("role definition") )
-        {
-            if ( languageType.equals("Prova (declarative)") ) return AbstractOrbacPolicy.TYPE_PROVA_ROLE_DEFINITION;
-            else if ( languageType.equals("BeanShell (imperative)") ) return AbstractOrbacPolicy.TYPE_BEANSHELL_ROLE_DEFINITION;
-            else if ( languageType.equals("Threat") ) return AbstractOrbacPolicy.TYPE_THREAT_ROLE_DEFINITION;
-        }
-        else if ( selectedType.equals("activity definition") )
-        {
-            if ( languageType.equals("Prova (declarative)") ) return AbstractOrbacPolicy.TYPE_PROVA_ACTIVITY_DEFINITION;
-            else if ( languageType.equals("BeanShell (imperative)") ) return AbstractOrbacPolicy.TYPE_BEANSHELL_ACTIVITY_DEFINITION;
-            else if ( languageType.equals("Threat") ) return AbstractOrbacPolicy.TYPE_THREAT_ACTIVITY_DEFINITION;
-        }
-        else if ( selectedType.equals("view definition") )
-        {
-            if ( languageType.equals("Prova (declarative)") ) return AbstractOrbacPolicy.TYPE_PROVA_VIEW_DEFINITION;
-            else if ( languageType.equals("BeanShell (imperative)") ) return AbstractOrbacPolicy.TYPE_BEANSHELL_VIEW_DEFINITION;
-            else if ( languageType.equals("Threat") ) return AbstractOrbacPolicy.TYPE_THREAT_VIEW_DEFINITION;
-        }
-        return "";
+        return (String)jComboBoxEntityType.getSelectedItem();
     }
     public String GetEntityDefinitionLanguage()
     {
@@ -251,6 +233,11 @@ public class jDialogAddEntityDefinition extends javax.swing.JDialog {
     public String GetEntityName()
     {
         return (String)jComboBoxEntity.getSelectedItem();
+    }
+    // 0: role, 1: activity, 3: view
+    public int GetDefinitionType()
+    {
+        return jComboBoxEntityType.getSelectedIndex();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

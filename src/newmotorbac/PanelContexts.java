@@ -496,7 +496,7 @@ public class PanelContexts extends javax.swing.JPanel {
         try
         {
             // create context
-            thisContext.thePolicy.AddContext(createCtx.GetContextName(), createCtx.GetContextType());
+            thisContext.thePolicy.CreateContext(createCtx.GetContextName(), createCtx.GetContextType());
 
             // push policy on undo/redo stack
             thisContext.panelPolicy.PushPolicy();
