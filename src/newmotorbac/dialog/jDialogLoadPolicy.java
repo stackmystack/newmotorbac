@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import newmotorbac.services.IPluginDiscovery;
 import orbac.AbstractOrbacPolicy;
 import orbac.COrbacCore;
 import orbac.exception.CContextTypeNotFoundException;
@@ -90,7 +91,8 @@ public class jDialogLoadPolicy extends javax.swing.JDialog {
                         BundleContext context = selectedPlugin.getBundleContext();
                         ServiceReference[] serviceRefs = selectedPlugin.getRegisteredServices();
                         for (int i = 0; i < serviceRefs.length; i++) {
-                            ((IPolicyProcessorService) context.getService(serviceRefs[i])).ProcessPolicy(policy, file.toString());
+                            if(((IPluginDiscovery) context.getService(serviceRefs[i])).contributesToPolicy())
+                                ((IPolicyProcessorService) context.getService(serviceRefs[i])).ProcessPolicy(policy, file.toString());
                         }
                     }
                     policy.ReadPolicyFile(file.toString());
