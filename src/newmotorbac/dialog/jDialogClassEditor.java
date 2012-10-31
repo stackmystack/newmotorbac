@@ -276,7 +276,7 @@ public class jDialogClassEditor extends javax.swing.JDialog {
                                                               JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                               JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
                 classesInfos.setText("Please select a class in the class hierarchy to display its members.\n"
-                                   + "Total number of classes for the current policy: " + thisContext.thePolicy.GetClassesList().size());
+                                   + "Total number of classes for the current policy: " + thisContext.thePolicy.GetConcreteClassesList().size());
 
                 jButtonDelete.setEnabled(false);
                 jButtonEdit.setEnabled(false);
@@ -289,7 +289,7 @@ public class jDialogClassEditor extends javax.swing.JDialog {
                 jSplitPane.setBottomComponent(jPanelAttributes);
                 // display selected class attributes and default values
                 selectedClass = node.getUserObject().toString();
-                Map<String, String> classAttributes = thisContext.thePolicy.GetClassMembers(selectedClass);
+                Map<String, String> classAttributes = thisContext.thePolicy.GetConcreteClassMembers(selectedClass);
                 tableModel.SetData(classAttributes);
 
                 jButtonDelete.setEnabled(true);
@@ -310,9 +310,9 @@ public class jDialogClassEditor extends javax.swing.JDialog {
         try
         {
             // get orbac classes
-            Set<String> classes = thisContext.thePolicy.GetClassesList();
+            Set<String> classes = thisContext.thePolicy.GetConcreteClassesList();
             // get selected class super classes
-            Set<String> entityClasses = thisContext.thePolicy.GetSuperClasses(selectedClass);
+            Set<String> entityClasses = thisContext.thePolicy.GetConcreteSuperClasses(selectedClass);
 
             // get new entity name and the classes it instanciates
             JFrame mainFrame = NewMotorbacApp.getApplication().getMainFrame();
@@ -333,8 +333,8 @@ public class jDialogClassEditor extends javax.swing.JDialog {
 
                 Set<String> selectedClasses = dialogBox.GetSuperClasses();
                 // set super classes
-                thisContext.thePolicy.DeleteClassSuperClasses(selectedClass);
-                thisContext.thePolicy.AddClassSuperClasses(className, selectedClasses);
+                thisContext.thePolicy.DeleteConcreteClassSuperClasses(selectedClass);
+                thisContext.thePolicy.AddConcreteClassSuperClasses(className, selectedClasses);
 
                 DisplayClassHierarchy();
             }
@@ -350,7 +350,7 @@ public class jDialogClassEditor extends javax.swing.JDialog {
         try
         {
             // get orbac classes
-            Set<String> classes = thisContext.thePolicy.GetClassesList();
+            Set<String> classes = thisContext.thePolicy.GetConcreteClassesList();
 
             // get new entity name and the classes it instanciates
             JFrame mainFrame = NewMotorbacApp.getApplication().getMainFrame();
@@ -377,7 +377,7 @@ public class jDialogClassEditor extends javax.swing.JDialog {
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
         try
         {
-            thisContext.thePolicy.DeleteClass(selectedClass);
+            thisContext.thePolicy.DeleteConcreteClass(selectedClass);
             DisplayClassHierarchy();
         }
         catch ( COrbacException e )
@@ -406,7 +406,7 @@ public class jDialogClassEditor extends javax.swing.JDialog {
             {
                 String attributeName = dialogBox.GetAttributeName();
                 String attributeValue = dialogBox.GetAttributeDefaultValue();
-                thisContext.thePolicy.AddClassMember(selectedClass, attributeName, attributeValue);
+                thisContext.thePolicy.AddConcreteClassMember(selectedClass, attributeName, attributeValue);
 
                 DisplayClassHierarchy();
             }
@@ -427,7 +427,7 @@ public class jDialogClassEditor extends javax.swing.JDialog {
 
             String memberName = (String)jTableClassAttributes.getValueAt(row, 0);
 
-            thisContext.thePolicy.DeleteClassMember(selectedClass, memberName);
+            thisContext.thePolicy.DeleteConcreteClassMember(selectedClass, memberName);
         }
         catch ( COrbacException e )
         {
@@ -544,7 +544,7 @@ public class jDialogClassEditor extends javax.swing.JDialog {
                 // reflect change in policy
                 try
                 {
-                    thisContext.thePolicy.SetClassDefaultMemberValue(selectedClass, attributesNames[row], attributesValues[row]);
+                    thisContext.thePolicy.SetConcreteClassDefaultMemberValue(selectedClass, attributesNames[row], attributesValues[row]);
                 }
                 catch (COrbacException e)
                 {
@@ -570,7 +570,7 @@ public class jDialogClassEditor extends javax.swing.JDialog {
             // if we are displaying an inherited member, then change background color
             try
             {
-                Map<String, String> membersOnly = thisContext.thePolicy.GetClassMembersOnly(selectedClass);
+                Map<String, String> membersOnly = thisContext.thePolicy.GetConcreteClassMembersOnly(selectedClass);
                 String memberName = (String)table.getValueAt(row, 0);
                 if ( membersOnly.containsKey(memberName) )
                     cell.setBackground(cellMember);

@@ -420,7 +420,7 @@ public class PanelConcreteEntity extends javax.swing.JPanel implements ActionLis
         try
         {
             // get orbac classes
-            Set<String> classes = thisContext.thePolicy.GetClassesList();
+            Set<String> classes = thisContext.thePolicy.GetConcreteClassesList();
             
             // get new entity name and the classes it instanciates
             JFrame mainFrame = NewMotorbacApp.getApplication().getMainFrame();
@@ -513,7 +513,7 @@ public class PanelConcreteEntity extends javax.swing.JPanel implements ActionLis
             // get selected entity classes
             Set<String> entityClasses = thisContext.thePolicy.GetConcreteEntityClasses( entityName );
             // get orbac classes
-            Set<String> classes = thisContext.thePolicy.GetClassesList();
+            Set<String> classes = thisContext.thePolicy.GetConcreteClassesList();
 
             // get modified entity name and the classes it instanciates
             JFrame mainFrame = NewMotorbacApp.getApplication().getMainFrame();
@@ -746,7 +746,7 @@ public class PanelConcreteEntity extends javax.swing.JPanel implements ActionLis
                 // reflect change in policy
                 try
                 {
-                    thisContext.thePolicy.SetClassInstanceMemberValue(associatedEntity, attributesNames[row], attributesValues[row]);
+                    thisContext.thePolicy.SetConcreteClassInstanceMemberValue(associatedEntity, attributesNames[row], attributesValues[row]);
                 }
                 catch (COrbacException e)
                 {
@@ -800,7 +800,7 @@ public class PanelConcreteEntity extends javax.swing.JPanel implements ActionLis
                     }
                     // build class list
                     assignClassSubMenu.removeAll();
-                    Set<String> classes = thisContext.thePolicy.GetClassesList();
+                    Set<String> classes = thisContext.thePolicy.GetConcreteClassesList();
                     for ( String c : classes )
                     {
                         JMenuItem mi = new JMenuItem( c );
@@ -890,7 +890,7 @@ public class PanelConcreteEntity extends javax.swing.JPanel implements ActionLis
             }
             // build class list
             assignClassSubMenu.removeAll();
-            Set<String> classes = thisContext.thePolicy.GetClassesList();
+            Set<String> classes = thisContext.thePolicy.GetConcreteClassesList();
             for ( String c : classes )
             {
                 JMenuItem mi = new JMenuItem( c );
