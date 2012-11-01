@@ -1095,7 +1095,7 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
                 attributesValues[row] = (String) value;
                 // reflect change in policy
                 try {
-                    thisContext.thePolicy.SetConcreteClassInstanceMemberValue(associatedEntity, attributesNames[row], attributesValues[row]);
+                    thisContext.thePolicy.SetAbstractClassInstanceMemberValue(associatedEntity, attributesNames[row], attributesValues[row]);
                 } catch (COrbacException e) {
                     e.printStackTrace();
                 }
