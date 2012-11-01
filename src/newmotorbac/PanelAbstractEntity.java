@@ -935,10 +935,10 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
     // popup menu mouse handler
 
     class PopupListener extends MouseAdapter {
-        
+
         private ActionListener parent;
-        
-        public PopupListener(ActionListener parent){
+
+        public PopupListener(ActionListener parent) {
             this.parent = parent;
         }
 
@@ -975,6 +975,10 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
                         assignClass.removeAll();
                         Set<String> classes = thisContext.thePolicy.GetAbstractClassesList();
                         for (String c : classes) {
+                            Set<String> instances = thisContext.thePolicy.GetAbstractClassInstancesNames(c);
+                            if (instances != null && instances.contains(((DefaultMutableTreeNode) jTreeEntityHierarchy.getLastSelectedPathComponent()).toString())) {
+                                continue;
+                            }
                             JMenuItem mi = new JMenuItem(c);
                             mi.addActionListener(this.parent);
                             assignClass.add(mi);
@@ -983,8 +987,6 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
                         Logger.getLogger(PanelAbstractEntity.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-
-
                 popupMenu.show(e.getComponent(), e.getX(), e.getY());
             }
         }
