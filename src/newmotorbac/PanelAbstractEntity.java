@@ -22,8 +22,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -37,9 +39,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -73,6 +77,7 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
     private JMenuItem editEntityMenuItem;
     private JMenuItem deleteEntityMenuItem;
     private JMenu assignClass;
+    private MyTableModel tableModel = new MyTableModel();
     // used to have a more compact code
     String[] entityTypes = {"role", "activity", "view"};
     String[] prefixEntityTypes = {"a role", "an activity", "a view"};
@@ -82,13 +87,13 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
      */
     public PanelAbstractEntity(OrbacPolicyContext thisContext, int entityType) {
         initComponents();
-
+        
         assignClass = new JMenu("Assign class");
         assignClass.addActionListener(this);
 
         // setup tree transfer handler for drag and drop
         jTreeEntityHierarchy.setTransferHandler(new ToTransferHandler(TransferHandler.COPY));
-
+        
         // setup tree renderer
         URL url1 = NewMotorbacView.class.getResource("/newmotorbac/resources/" + entityTypes[entityType] + "_new.png");
         if (url1 != null) {
@@ -117,7 +122,7 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
                 break;
         }
         // display a message in the information area to tell the user to select an entity
-        jSplitPane1.setBottomComponent(new JLabel("Select " + prefixEntityTypes[entityType]));
+        //jSplitPane1.setBottomComponent(new JLabel("Select " + prefixEntityTypes[entityType]));
 
         // set selection model
         jTreeEntityHierarchy.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -144,6 +149,7 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
         UpdateHierarchy();
     }
 
+    @Override
     public void actionPerformed(java.awt.event.ActionEvent evt) {
         if (evt.getSource() instanceof JMenuItem) {
             JMenuItem source = (JMenuItem) evt.getSource();
@@ -151,7 +157,10 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
             // get selected abstract entity in the tree
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTreeEntityHierarchy.getLastSelectedPathComponent();
             String selectedEntity = (node == null) ? null : node.toString();
-
+            
+            if(selectedEntity == null) {
+                return;
+            }
             try {
                 if (source == addEntityMenuItem) {
                     switch (entityType) {
@@ -373,26 +382,28 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTreeEntityHierarchy = new javax.swing.JTree();
         jPanelAssignments = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTableAssignments = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        attributesTable = new javax.swing.JTable();
 
         setName("Form"); // NOI18N
         setPreferredSize(new java.awt.Dimension(200, 124));
-
-        jSplitPane1.setDividerLocation(300);
-        jSplitPane1.setLastDividerLocation(300);
-        jSplitPane1.setMinimumSize(new java.awt.Dimension(200, 25));
-        jSplitPane1.setName("jSplitPane1"); // NOI18N
+        setLayout(new java.awt.GridLayout(1, 3, 1, 0));
 
         jScrollPane1.setMinimumSize(new java.awt.Dimension(250, 25));
         jScrollPane1.setName("jScrollPane1"); // NOI18N
         jScrollPane1.setPreferredSize(new java.awt.Dimension(200, 402));
 
         jTreeEntityHierarchy.setName("jTreeEntityHierarchy"); // NOI18N
+        jTreeEntityHierarchy.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTreeEntityHierarchyMouseClicked(evt);
+            }
+        });
         jTreeEntityHierarchy.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
                 jTreeEntityHierarchyValueChanged(evt);
@@ -400,12 +411,10 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
         });
         jScrollPane1.setViewportView(jTreeEntityHierarchy);
 
-        jSplitPane1.setLeftComponent(jScrollPane1);
+        add(jScrollPane1);
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(newmotorbac.NewMotorbacApp.class).getContext().getResourceMap(PanelAbstractEntity.class);
-        jPanelAssignments.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceMap.getString("jPanelAssignments.border.title"))); // NOI18N
+        jPanelAssignments.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         jPanelAssignments.setName("jPanelAssignments"); // NOI18N
-        jPanelAssignments.setPreferredSize(new java.awt.Dimension(200, 326));
 
         jScrollPane2.setName("jScrollPane2"); // NOI18N
 
@@ -438,37 +447,37 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
         jTableAssignments.setName("jTableAssignments"); // NOI18N
         jTableAssignments.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(jTableAssignments);
-        jTableAssignments.getColumnModel().getColumn(0).setHeaderValue(resourceMap.getString("jTableAssignments.columnModel.title0")); // NOI18N
-        jTableAssignments.getColumnModel().getColumn(1).setHeaderValue(resourceMap.getString("jTableAssignments.columnModel.title1")); // NOI18N
 
         javax.swing.GroupLayout jPanelAssignmentsLayout = new javax.swing.GroupLayout(jPanelAssignments);
         jPanelAssignments.setLayout(jPanelAssignmentsLayout);
         jPanelAssignmentsLayout.setHorizontalGroup(
             jPanelAssignmentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelAssignmentsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 329, Short.MAX_VALUE)
+            .addGroup(jPanelAssignmentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelAssignmentsLayout.createSequentialGroup()
+                    .addGap(0, 164, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 165, Short.MAX_VALUE)))
         );
         jPanelAssignmentsLayout.setVerticalGroup(
             jPanelAssignmentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelAssignmentsLayout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 120, Short.MAX_VALUE)
+            .addGroup(jPanelAssignmentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelAssignmentsLayout.createSequentialGroup()
+                    .addGap(0, 60, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 60, Short.MAX_VALUE)))
         );
 
-        jSplitPane1.setRightComponent(jPanelAssignments);
+        add(jPanelAssignments);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
-        );
+        jScrollPane3.setName("jScrollPane3"); // NOI18N
+
+        attributesTable.setModel(tableModel);
+        attributesTable.setName("attributesTable"); // NOI18N
+        jScrollPane3.setViewportView(attributesTable);
+
+        add(jScrollPane3);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTreeEntityHierarchyValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTreeEntityHierarchyValueChanged
@@ -478,16 +487,31 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
         }
         if (node == jTreeEntityHierarchy.getModel().getRoot()) {
             // nothing to do, just display a message in the information area to tell the user to select an entity
-            jSplitPane1.setBottomComponent(new JLabel("Select " + prefixEntityTypes[entityType]));
+            //jSplitPane1.setBottomComponent(new JLabel("Select " + prefixEntityTypes[entityType]));
         } else {
             // restore list if necessary
-            jSplitPane1.setBottomComponent(jPanelAssignments);
+            //jSplitPane1.setBottomComponent(jPanelAssignments);
 
             // display info related to the selected entity
             String abstractEntity = node.getUserObject().toString();
             DisplayEntityInformation(abstractEntity);
         }
     }//GEN-LAST:event_jTreeEntityHierarchyValueChanged
+
+    private void jTreeEntityHierarchyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeEntityHierarchyMouseClicked
+
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTreeEntityHierarchy.getLastSelectedPathComponent();
+        if (node != null) {
+            try {
+                Map<String, String> membersValues = thisContext.thePolicy.GetAbstractEntityClassMembersAndValues(node.toString());
+                if (membersValues != null) {
+                    tableModel.SetData(membersValues, node.toString());
+                }
+            } catch (COrbacException ex) {
+                Logger.getLogger(PanelAbstractEntity.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jTreeEntityHierarchyMouseClicked
 
     // display information about the selected node in the tree
     public void RefreshSelectedEntityInformation() {
@@ -607,10 +631,12 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable attributesTable;
     private javax.swing.JPanel jPanelAssignments;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTable jTableAssignments;
     private javax.swing.JTree jTreeEntityHierarchy;
     // End of variables declaration//GEN-END:variables
@@ -989,6 +1015,92 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
                 }
                 popupMenu.show(e.getComponent(), e.getX(), e.getY());
             }
+        }
+    }
+
+    // implement custom table model for class attributes edition
+    class MyTableModel extends AbstractTableModel {
+
+        private static final long serialVersionUID = 1L;
+        // columns and data
+        private String[] columnNames = {"Attribute", "Value"};
+        private String[] attributesNames = new String[0];
+        private String[] attributesValues = new String[0];
+        // concrete entity associated with this data
+        private String associatedEntity = "";
+        
+        public void SetData(Map<String, String> dataMap, String associatedEntity) {
+            // store entity name
+            this.associatedEntity = associatedEntity;
+            // allocate memory
+            attributesNames = new String[dataMap.size()];
+            attributesValues = new String[dataMap.size()];
+            // copy content
+            Set< Map.Entry<String, String>> es = dataMap.entrySet();
+            Iterator< Map.Entry<String, String>> ies = es.iterator();
+            int i = 0;
+            while (ies.hasNext()) {
+                Map.Entry<String, String> e = ies.next();
+                attributesNames[i] = e.getKey();
+                attributesValues[i] = e.getValue();
+                i++;
+            }
+            fireTableDataChanged();
+        }
+
+        public void clear() {
+            HashMap<String, String> dummyMap = new HashMap<String, String>();
+            SetData(dummyMap, "dummy");
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 2;
+        }
+
+        @Override
+        public int getRowCount() {
+            return attributesValues.length;
+        }
+
+        public boolean isCellEditable(int row, int col) {
+            // only attributes values can be edited
+            if (col < 1) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        @Override
+        public Object getValueAt(int arg0, int arg1) {
+            if (arg1 == 0) {
+                // attribute name
+                return attributesNames[arg0];
+            } else {
+                // attribute value
+                return attributesValues[arg0];
+            }
+        }
+
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
+
+        public void setValueAt(Object value, int row, int col) {
+            if (col == 0) {
+                // attribute name, should never happen
+            } else {
+                // attribute value
+                attributesValues[row] = (String) value;
+                // reflect change in policy
+                try {
+                    thisContext.thePolicy.SetConcreteClassInstanceMemberValue(associatedEntity, attributesNames[row], attributesValues[row]);
+                } catch (COrbacException e) {
+                    e.printStackTrace();
+                }
+            }
+            fireTableCellUpdated(row, col);
         }
     }
 }

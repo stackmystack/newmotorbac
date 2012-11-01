@@ -11,13 +11,11 @@
 
 package newmotorbac;
 
-import newmotorbac.util.OrbacPolicyContext;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import newmotorbac.dialog.jDialogAddConcreteEntity;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +30,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.table.AbstractTableModel;
+import newmotorbac.dialog.jDialogAddConcreteEntity;
+import newmotorbac.util.OrbacPolicyContext;
 import orbac.AbstractOrbacPolicy;
 import orbac.concreteEntities.CConcreteEntityAssignement;
 import orbac.conflict.CSeparationConstraint;
