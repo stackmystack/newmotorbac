@@ -253,7 +253,7 @@ public class jDialogClassEditor extends javax.swing.JDialog {
         try
         {
             DefaultMutableTreeNode rootOrg = new DefaultMutableTreeNode("All classes");
-            thisContext.thePolicy.GetClassHierarchy(rootOrg, !thisContext.adorbacViewActive);
+            thisContext.thePolicy.GetConcreteClassHierarchy(rootOrg, !thisContext.adorbacViewActive);
             jTreeClasses.setModel(new DefaultTreeModel(rootOrg));
         }
         catch ( COrbacException e)
@@ -327,7 +327,7 @@ public class jDialogClassEditor extends javax.swing.JDialog {
                 // rename class if necessary
                 if ( selectedClass.equals(className) == false )
                 {
-                    thisContext.thePolicy.RenameClass(selectedClass, className);
+                    thisContext.thePolicy.RenameConcreteClass(selectedClass, className);
                     selectedClass = className;
                 }
 
@@ -362,7 +362,7 @@ public class jDialogClassEditor extends javax.swing.JDialog {
             if ( dialogBox.canceled == false )
             {
                 String className = dialogBox.GetClassName();
-                thisContext.thePolicy.CreateClass(className, dialogBox.GetSuperClasses());
+                thisContext.thePolicy.CreateConcreteClass(className, dialogBox.GetSuperClasses());
 
                 DisplayClassHierarchy();
             }

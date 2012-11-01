@@ -8,7 +8,6 @@
  *
  * Created on May 5, 2011, 4:57:12 PM
  */
-
 package newmotorbac;
 
 import newmotorbac.util.SimpleCellRenderer;
@@ -27,12 +26,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
@@ -57,42 +60,46 @@ import orbac.exception.CViolatedEntityDefinitionException;
  *
  * @author fabien
  */
-public class PanelAbstractEntity extends javax.swing.JPanel implements ActionListener {
+public class PanelAbstractEntity extends JPanel implements ActionListener {
     // policy context
+
     OrbacPolicyContext thisContext;
     // entity type displayed by this instance
     int entityType;
     // the organization tree contextual menu
-    private JPopupMenu      popupMenu = new JPopupMenu();
-    private MouseListener   popupListener = new PopupListener();
-    private JMenuItem       addEntityMenuItem;
-    private JMenuItem       editEntityMenuItem;
-    private JMenuItem       deleteEntityMenuItem;
-
+    private JPopupMenu popupMenu = new JPopupMenu();
+    private MouseListener popupListener = new PopupListener(this);
+    private JMenuItem addEntityMenuItem;
+    private JMenuItem editEntityMenuItem;
+    private JMenuItem deleteEntityMenuItem;
+    private JMenu assignClass;
     // used to have a more compact code
     String[] entityTypes = {"role", "activity", "view"};
     String[] prefixEntityTypes = {"a role", "an activity", "a view"};
 
-    /** Creates new form PanelAbstractEntity */
+    /**
+     * Creates new form PanelAbstractEntity
+     */
     public PanelAbstractEntity(OrbacPolicyContext thisContext, int entityType) {
         initComponents();
+
+        assignClass = new JMenu("Assign class");
+        assignClass.addActionListener(this);
 
         // setup tree transfer handler for drag and drop
         jTreeEntityHierarchy.setTransferHandler(new ToTransferHandler(TransferHandler.COPY));
 
         // setup tree renderer
         URL url1 = NewMotorbacView.class.getResource("/newmotorbac/resources/" + entityTypes[entityType] + "_new.png");
-        if( url1 != null )
-        {
+        if (url1 != null) {
             ImageIcon img1 = new ImageIcon(url1);
             jTreeEntityHierarchy.setCellRenderer(new SimpleCellRenderer(img1, img1));
         }
 
         // setup interface
-        DefaultTableModel m = (DefaultTableModel)jTableAssignments.getModel();
-        TitledBorder b = (TitledBorder)jPanelAssignments.getBorder();
-        switch (entityType)
-        {
+        DefaultTableModel m = (DefaultTableModel) jTableAssignments.getModel();
+        TitledBorder b = (TitledBorder) jPanelAssignments.getBorder();
+        switch (entityType) {
             case AbstractOrbacPolicy.TYPE_ROLE:
                 b.setTitle("Subject assignments");
                 String[] sc = {"Empowered subject", "Organization"};
@@ -111,7 +118,7 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
         }
         // display a message in the information area to tell the user to select an entity
         jSplitPane1.setBottomComponent(new JLabel("Select " + prefixEntityTypes[entityType]));
-        
+
         // set selection model
         jTreeEntityHierarchy.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -122,6 +129,7 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
         popupMenu.add(addEntityMenuItem);
         popupMenu.add(editEntityMenuItem);
         popupMenu.add(deleteEntityMenuItem);
+        popupMenu.add(assignClass);
         addEntityMenuItem.addActionListener(this);
         editEntityMenuItem.addActionListener(this);
         deleteEntityMenuItem.addActionListener(this);
@@ -136,22 +144,17 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
         UpdateHierarchy();
     }
 
-    public void actionPerformed(java.awt.event.ActionEvent evt)
-    {
-        if ( evt.getSource() instanceof JMenuItem )
-        {
-            JMenuItem source = (JMenuItem)evt.getSource();
+    public void actionPerformed(java.awt.event.ActionEvent evt) {
+        if (evt.getSource() instanceof JMenuItem) {
+            JMenuItem source = (JMenuItem) evt.getSource();
 
             // get selected abstract entity in the tree
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTreeEntityHierarchy.getLastSelectedPathComponent();
             String selectedEntity = (node == null) ? null : node.toString();
 
-            try
-            {
-                if ( source == addEntityMenuItem )
-                {
-                    switch (entityType)
-                    {
+            try {
+                if (source == addEntityMenuItem) {
+                    switch (entityType) {
                         case AbstractOrbacPolicy.TYPE_ROLE:
                             AddRole(selectedEntity);
                             break;
@@ -162,15 +165,12 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
                             AddView(selectedEntity);
                             break;
                     }
-                }
-                else if ( source == editEntityMenuItem )
-                {
+                } else if (source == editEntityMenuItem) {
                     // display the same dialog than when creating a new abstract entity
                     String oldName = selectedEntity;
                     Set<String> entities = null;
                     Set<String> superEntities = null;
-                    switch (entityType)
-                    {
+                    switch (entityType) {
                         case AbstractOrbacPolicy.TYPE_ROLE:
                             entities = thisContext.thePolicy.GetRolesList(!thisContext.adorbacViewActive);
                             superEntities = thisContext.thePolicy.GetSuperRoles(thisContext.currentOrganization, selectedEntity);
@@ -195,13 +195,10 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
                     NewMotorbacApp.getApplication().show(editEntity);
 
                     // get result if not cancelled
-                    if ( editEntity.canceled == false )
-                    {
+                    if (editEntity.canceled == false) {
                         // change entity name
-                        if ( oldName.equals( editEntity.GetEntityName() ) == false )
-                        {
-                            switch (entityType)
-                            {
+                        if (oldName.equals(editEntity.GetEntityName()) == false) {
+                            switch (entityType) {
                                 case AbstractOrbacPolicy.TYPE_ROLE:
                                     thisContext.thePolicy.RenameRole(oldName, editEntity.GetEntityName());
                                     break;
@@ -219,49 +216,51 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
                         Set<String> nse = editEntity.GetSuperEntities();
                         // first check for removed super entities
                         Vector<String> entitiesToRemove = new Vector<String>();
-                        for ( String ce : superEntities )
-                        {
-                            if ( nse.contains(ce) == false )
+                        for (String ce : superEntities) {
+                            if (nse.contains(ce) == false) {
                                 entitiesToRemove.add(ce);
+                            }
                         }
                         // check for added super entities
                         Vector<String> entitiesToAdd = new Vector<String>();
-                        for ( String ce : nse )
-                        {
-                            if ( superEntities.contains(ce) == false )
+                        for (String ce : nse) {
+                            if (superEntities.contains(ce) == false) {
                                 entitiesToAdd.add(ce);
+                            }
                         }
                         // now modify the hierarchy
-                        switch (entityType)
-                        {
+                        switch (entityType) {
                             case AbstractOrbacPolicy.TYPE_ROLE:
-                                for (int i = 0; i < entitiesToRemove.size(); i++)
+                                for (int i = 0; i < entitiesToRemove.size(); i++) {
                                     thisContext.thePolicy.DeleteRoleHierarchy(selectedEntity, entitiesToRemove.elementAt(i), thisContext.currentOrganization);
-                                for (int i = 0; i < entitiesToAdd.size(); i++)
+                                }
+                                for (int i = 0; i < entitiesToAdd.size(); i++) {
                                     thisContext.thePolicy.CreateRoleHierarchy(selectedEntity, entitiesToAdd.elementAt(i), thisContext.currentOrganization);
+                                }
                                 break;
                             case AbstractOrbacPolicy.TYPE_ACTIVITY:
-                                for (int i = 0; i < entitiesToRemove.size(); i++)
+                                for (int i = 0; i < entitiesToRemove.size(); i++) {
                                     thisContext.thePolicy.DeleteActivityHierarchy(selectedEntity, entitiesToRemove.elementAt(i), thisContext.currentOrganization);
-                                for (int i = 0; i < entitiesToAdd.size(); i++)
+                                }
+                                for (int i = 0; i < entitiesToAdd.size(); i++) {
                                     thisContext.thePolicy.CreateActivityHierarchy(selectedEntity, entitiesToAdd.elementAt(i), thisContext.currentOrganization);
+                                }
                                 break;
                             case AbstractOrbacPolicy.TYPE_VIEW:
-                                for (int i = 0; i < entitiesToRemove.size(); i++)
+                                for (int i = 0; i < entitiesToRemove.size(); i++) {
                                     thisContext.thePolicy.DeleteViewHierarchy(selectedEntity, entitiesToRemove.elementAt(i), thisContext.currentOrganization);
-                                for (int i = 0; i < entitiesToAdd.size(); i++)
+                                }
+                                for (int i = 0; i < entitiesToAdd.size(); i++) {
                                     thisContext.thePolicy.CreateViewHierarchy(selectedEntity, entitiesToAdd.elementAt(i), thisContext.currentOrganization);
+                                }
                                 break;
                         }
 
                         // refresh entity tree
                         UpdateHierarchy();
                     }
-                }
-                else if ( source == deleteEntityMenuItem )
-                {
-                    switch (entityType)
-                    {
+                } else if (source == deleteEntityMenuItem) {
+                    switch (entityType) {
                         case AbstractOrbacPolicy.TYPE_ROLE:
                             thisContext.thePolicy.RemoveRoleFromOrg(selectedEntity, thisContext.currentOrganization);
                             break;
@@ -272,19 +271,28 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
                             thisContext.thePolicy.RemoveViewFromOrg(selectedEntity, thisContext.currentOrganization);
                             break;
                     }
+                } else if (source.getParent() == assignClass.getPopupMenu()) {
+                    try {
+                        thisContext.thePolicy.AssignAbstractEntityToClass(selectedEntity, source.getText());
+
+                        // refresh selected entity information
+                        RefreshSelectedEntityInformation();
+
+                        // save the modified policy in history if operation is successful
+                        thisContext.panelPolicy.PushPolicy();
+                    } catch (COrbacException e) {
+                        System.out.println("actionPerformed():" + e);
+                        e.printStackTrace();
+                    }
                 }
 
                 // push policy on undo/redo stack
                 thisContext.panelPolicy.PushPolicy();
-            }
-            catch ( COrbacException e )
-            {
+            } catch (COrbacException e) {
                 System.out.println(e);
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(findActiveFrame(), e.getMessage());
-            }
-            catch ( Exception e )
-            {
+            } catch (Exception e) {
                 System.out.println(e);
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(findActiveFrame(), e.getMessage());
@@ -292,17 +300,13 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
         }
     }
 
-    public void UpdateHierarchy()
-    {
+    public void UpdateHierarchy() {
         DefaultMutableTreeNode root = null;
-        try
-        {
-            if ( thisContext.currentOrganization == null )
-            {
+        try {
+            if (thisContext.currentOrganization == null) {
                 // get all entities without hierarchies
                 Set<String> list = null;
-                switch (entityType)
-                {
+                switch (entityType) {
                     case AbstractOrbacPolicy.TYPE_ROLE:
                         list = thisContext.thePolicy.GetRolesList(!thisContext.adorbacViewActive);
                         // build tree
@@ -320,56 +324,50 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
                         break;
                 }
                 Iterator<String> il = list.iterator();
-                while ( il.hasNext() )
-                {
+                while (il.hasNext()) {
                     DefaultMutableTreeNode subEntityNode = new DefaultMutableTreeNode(il.next());
 
                     root.add(subEntityNode);
                 }
                 jTreeEntityHierarchy.setModel(new DefaultTreeModel(root));
-            }
-            else 
-            {
+            } else {
                 // build tree
-                switch (entityType)
-                {
+                switch (entityType) {
                     case AbstractOrbacPolicy.TYPE_ROLE:
                         // build tree
                         root = new DefaultMutableTreeNode("All roles");
                         thisContext.thePolicy.GetAssociatedRolesHierarchy(root,
-                                                                          thisContext.currentOrganization,
-                                                                          !thisContext.adorbacViewActive);
+                                thisContext.currentOrganization,
+                                !thisContext.adorbacViewActive);
                         break;
                     case AbstractOrbacPolicy.TYPE_ACTIVITY:
                         // build tree
                         root = new DefaultMutableTreeNode("All activities");
                         thisContext.thePolicy.GetAssociatedActivitiesHierarchy(root,
-                                                                               thisContext.currentOrganization,
-                                                                               !thisContext.adorbacViewActive);
+                                thisContext.currentOrganization,
+                                !thisContext.adorbacViewActive);
                         break;
                     case AbstractOrbacPolicy.TYPE_VIEW:
                         // build tree
                         root = new DefaultMutableTreeNode("All views");
                         thisContext.thePolicy.GetAssociatedViewsHierarchy(root,
-                                                                          thisContext.currentOrganization,
-                                                                          !thisContext.adorbacViewActive);
+                                thisContext.currentOrganization,
+                                !thisContext.adorbacViewActive);
                         break;
                 }
                 jTreeEntityHierarchy.setModel(new DefaultTreeModel(root));
                 expandAll(jTreeEntityHierarchy, true);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e);
             e.printStackTrace();
         }
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -474,15 +472,14 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTreeEntityHierarchyValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_jTreeEntityHierarchyValueChanged
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)jTreeEntityHierarchy.getLastSelectedPathComponent();
-        if ( node == null ) return;
-        if ( node == jTreeEntityHierarchy.getModel().getRoot() )
-        {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTreeEntityHierarchy.getLastSelectedPathComponent();
+        if (node == null) {
+            return;
+        }
+        if (node == jTreeEntityHierarchy.getModel().getRoot()) {
             // nothing to do, just display a message in the information area to tell the user to select an entity
             jSplitPane1.setBottomComponent(new JLabel("Select " + prefixEntityTypes[entityType]));
-        }
-        else
-        {
+        } else {
             // restore list if necessary
             jSplitPane1.setBottomComponent(jPanelAssignments);
 
@@ -493,30 +490,27 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
     }//GEN-LAST:event_jTreeEntityHierarchyValueChanged
 
     // display information about the selected node in the tree
-    public void RefreshSelectedEntityInformation()
-    {
+    public void RefreshSelectedEntityInformation() {
         // display info related to the selected entity
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)jTreeEntityHierarchy.getLastSelectedPathComponent();
-        if ( node == null )
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTreeEntityHierarchy.getLastSelectedPathComponent();
+        if (node == null) {
             return;
+        }
         String abstractEntity = node.getUserObject().toString();
         DisplayEntityInformation(abstractEntity);
     }
     // display the given entity information in the table
-    public void DisplayEntityInformation(String entity)
-    {
+
+    public void DisplayEntityInformation(String entity) {
         // display entity assignments related to the given entity
-        DefaultTableModel m = (DefaultTableModel)jTableAssignments.getModel();
+        DefaultTableModel m = (DefaultTableModel) jTableAssignments.getModel();
         m.setRowCount(0);
-        try
-        {
-            switch (entityType)
-            {
+        try {
+            switch (entityType) {
                 case AbstractOrbacPolicy.TYPE_ROLE:
                     HashSet<CRoleAssignment> ra = thisContext.thePolicy.GetRoleAssignments(entity);
                     // fill model
-                    for ( CRoleAssignment rai : ra )
-                    {
+                    for (CRoleAssignment rai : ra) {
                         String[] data = new String[2];
                         data[0] = rai.GetSubject();
                         data[1] = rai.GetOrganization();
@@ -526,8 +520,7 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
                 case AbstractOrbacPolicy.TYPE_ACTIVITY:
                     HashSet<CActivityAssignment> aa = thisContext.thePolicy.GetActivityAssignments(entity);
                     // fill model
-                    for ( CActivityAssignment aai : aa )
-                    {
+                    for (CActivityAssignment aai : aa) {
                         String[] data = new String[2];
                         data[0] = aai.GetAction();
                         data[1] = aai.GetOrganization();
@@ -537,8 +530,7 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
                 case AbstractOrbacPolicy.TYPE_VIEW:
                     HashSet<CViewAssignment> va = thisContext.thePolicy.GetViewAssignments(entity);
                     // fill model
-                    for ( CViewAssignment vai : va )
-                    {
+                    for (CViewAssignment vai : va) {
                         String[] data = new String[2];
                         data[0] = vai.GetObject();
                         data[1] = vai.GetOrganization();
@@ -546,78 +538,74 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
                     }
                     break;
             }
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             System.out.println(e);
             e.printStackTrace();
         }
     }
 
     // add a role
-    private void AddRole(String superEntity) throws COrbacException
-    {
+    private void AddRole(String superEntity) throws COrbacException {
         // display modal dialog box
-        Set<String> roles =thisContext.thePolicy.GetRolesList(!thisContext.adorbacViewActive);
+        Set<String> roles = thisContext.thePolicy.GetRolesList(!thisContext.adorbacViewActive);
         jDialogAddAbstractEntity createRole = new jDialogAddAbstractEntity(findActiveFrame(), "role", roles, superEntity, thisContext.currentOrganization, true);
         createRole.setLocationRelativeTo(findActiveFrame());
         NewMotorbacApp.getApplication().show(createRole);
         // get result if not cancelled
-        if ( createRole.canceled == false )
-        {
+        if (createRole.canceled == false) {
             // create role
             thisContext.thePolicy.CreateRoleAndInsertIntoOrg(createRole.GetEntityName(), thisContext.currentOrganization);
             // create hierarchy if necessary
-            for ( String superRole : createRole.GetSuperEntities() )
+            for (String superRole : createRole.GetSuperEntities()) {
                 thisContext.thePolicy.CreateRoleHierarchy(createRole.GetEntityName(), superRole, thisContext.currentOrganization);
+            }
 
             // refresh abstract entities trees
             UpdateHierarchy();
         }
     }
     // add an activity
-    private void AddActivity(String superEntity) throws COrbacException
-    {
+
+    private void AddActivity(String superEntity) throws COrbacException {
         // display modal dialog box
-        Set<String> activities =thisContext.thePolicy.GetActivitiesList(!thisContext.adorbacViewActive);
+        Set<String> activities = thisContext.thePolicy.GetActivitiesList(!thisContext.adorbacViewActive);
         jDialogAddAbstractEntity createActivity = new jDialogAddAbstractEntity(findActiveFrame(), "activity", activities, superEntity, thisContext.currentOrganization, true);
         createActivity.setLocationRelativeTo(findActiveFrame());
         NewMotorbacApp.getApplication().show(createActivity);
         // get result if not cancelled
-        if ( createActivity.canceled == false )
-        {
+        if (createActivity.canceled == false) {
             // create activity
             thisContext.thePolicy.CreateActivityAndInsertIntoOrg(createActivity.GetEntityName(), thisContext.currentOrganization);
             // create hierarchy if necessary
-            for ( String superActivity : createActivity.GetSuperEntities() )
+            for (String superActivity : createActivity.GetSuperEntities()) {
                 thisContext.thePolicy.CreateActivityHierarchy(createActivity.GetEntityName(), superActivity, thisContext.currentOrganization);
+            }
 
             // refresh abstract entities trees
             UpdateHierarchy();
         }
     }
     // add a view
-    private void AddView(String superEntity) throws COrbacException
-    {
+
+    private void AddView(String superEntity) throws COrbacException {
         // display modal dialog box
-        Set<String> views =thisContext.thePolicy.GetViewsList(!thisContext.adorbacViewActive);
+        Set<String> views = thisContext.thePolicy.GetViewsList(!thisContext.adorbacViewActive);
         jDialogAddAbstractEntity createView = new jDialogAddAbstractEntity(findActiveFrame(), "view", views, superEntity, thisContext.currentOrganization, true);
         createView.setLocationRelativeTo(findActiveFrame());
         NewMotorbacApp.getApplication().show(createView);
         // get result if not cancelled
-        if ( createView.canceled == false )
-        {
+        if (createView.canceled == false) {
             // create view
             thisContext.thePolicy.CreateViewAndInsertIntoOrg(createView.GetEntityName(), thisContext.currentOrganization);
             // create hierarchy if necessary
-            for ( String superView : createView.GetSuperEntities() )
+            for (String superView : createView.GetSuperEntities()) {
                 thisContext.thePolicy.CreateViewHierarchy(createView.GetEntityName(), superView, thisContext.currentOrganization);
+            }
 
             // refresh abstract entities trees
             UpdateHierarchy();
         }
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanelAssignments;
     private javax.swing.JScrollPane jScrollPane1;
@@ -628,15 +616,14 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
     // End of variables declaration//GEN-END:variables
 
     // abstract entities specific drag and drop handler
-    class ToTransferHandler extends TransferHandler
-    {
+    class ToTransferHandler extends TransferHandler {
+
         private static final long serialVersionUID = 1L;
         int action;
         // to know which icon from the toolbox has been dragged
         boolean toolBoxItemDropped = false;
         boolean toolBoxRuleDropped = false;
         int draggedRuleType;
-
         // multiple selection drag and drop support
         String[] entities;
         boolean multipleConcreteEntitiesDropped = false;
@@ -645,72 +632,62 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
             this.action = action;
         }
 
-        public boolean canImport(TransferHandler.TransferSupport support)
-        {
+        public boolean canImport(TransferHandler.TransferSupport support) {
             boolean dragOk = false;
             toolBoxItemDropped = false;
             toolBoxRuleDropped = false;
             multipleConcreteEntitiesDropped = false;
 
             // we only support drops (not clipboard paste)
-            if ( !support.isDrop() )
-            {
+            if (!support.isDrop()) {
                 return false;
             }
 
             // we only import Strings
-            if ( !support.isDataFlavorSupported(DataFlavor.stringFlavor) )
-            {
+            if (!support.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 return false;
             }
 
             // if no organization is selected then forbid the drag and drop
-            if ( thisContext.currentOrganization == null ) return false;
+            if (thisContext.currentOrganization == null) {
+                return false;
+            }
 
-            try
-            {
+            try {
                 // get dragged entity
-                String draggedEntity = (String)support.getTransferable().getTransferData(DataFlavor.stringFlavor);
+                String draggedEntity = (String) support.getTransferable().getTransferData(DataFlavor.stringFlavor);
 
                 // check for multiple selection drag and drop
-                if ( draggedEntity.contains("\n") )
-                {
+                if (draggedEntity.contains("\n")) {
                     // get entities
                     entities = Pattern.compile("\n").split(draggedEntity);
                     multipleConcreteEntitiesDropped = true;
                     dragOk = true;
-                }
-                // check if an abstract entity icon is dropped to create a new entity
-                else if(draggedEntity.contains("role_new.png") || draggedEntity.contains("activity_new.png") || draggedEntity.contains("view_new.png"))
-                {
+                } // check if an abstract entity icon is dropped to create a new entity
+                else if (draggedEntity.contains("role_new.png") || draggedEntity.contains("activity_new.png") || draggedEntity.contains("view_new.png")) {
                     // a toolbar icon is beeing dragged
-                    if ( (draggedEntity.contains("role_new.png") && entityType == AbstractOrbacPolicy.TYPE_ROLE) ||
-                         (draggedEntity.contains("activity_new.png") && entityType == AbstractOrbacPolicy.TYPE_ACTIVITY) ||
-                         (draggedEntity.contains("view_new.png") && entityType == AbstractOrbacPolicy.TYPE_VIEW) )
-                    {
+                    if ((draggedEntity.contains("role_new.png") && entityType == AbstractOrbacPolicy.TYPE_ROLE)
+                            || (draggedEntity.contains("activity_new.png") && entityType == AbstractOrbacPolicy.TYPE_ACTIVITY)
+                            || (draggedEntity.contains("view_new.png") && entityType == AbstractOrbacPolicy.TYPE_VIEW)) {
                         toolBoxItemDropped = true;
                         dragOk = true;
                     }
-                }
-                // check if an abstract rule icon is dropped to create a new abstract rule
-                else if(draggedEntity.contains("rule_permission.png") || draggedEntity.contains("rule_prohibition.png") || draggedEntity.contains("rule_obligation.png"))
-                {
-                    if ( draggedEntity.contains("rule_permission.png") )
-                            draggedRuleType = AbstractOrbacPolicy.TYPE_PERMISSION;
-                    else if( draggedEntity.contains("rule_prohibition.png") )
-                            draggedRuleType = AbstractOrbacPolicy.TYPE_PROHIBITION;
-                    else if( draggedEntity.contains("rule_obligation.png") )
-                            draggedRuleType = AbstractOrbacPolicy.TYPE_OBLIGATION;
+                } // check if an abstract rule icon is dropped to create a new abstract rule
+                else if (draggedEntity.contains("rule_permission.png") || draggedEntity.contains("rule_prohibition.png") || draggedEntity.contains("rule_obligation.png")) {
+                    if (draggedEntity.contains("rule_permission.png")) {
+                        draggedRuleType = AbstractOrbacPolicy.TYPE_PERMISSION;
+                    } else if (draggedEntity.contains("rule_prohibition.png")) {
+                        draggedRuleType = AbstractOrbacPolicy.TYPE_PROHIBITION;
+                    } else if (draggedEntity.contains("rule_obligation.png")) {
+                        draggedRuleType = AbstractOrbacPolicy.TYPE_OBLIGATION;
+                    }
                     toolBoxRuleDropped = true;
                     dragOk = true;
-                }
-                else
-                {
+                } else {
                     // check the dragged item type to only authorize drop on abstract entities
                     // corresponding to the dragged concrete entity
                     Set<String> concreteEntities = null;
-                    switch (entityType)
-                    {
+                    switch (entityType) {
                         case AbstractOrbacPolicy.TYPE_ROLE:
                             // the dragged entity must be a subject
                             concreteEntities = thisContext.thePolicy.GetSubjects();
@@ -734,12 +711,11 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
             } catch (java.io.IOException e) {
                 return false;
             } catch (Exception e) {
-            	return false;
+                return false;
             }
 
             boolean actionSupported = (action & support.getSourceDropActions()) == action;
-            if (actionSupported && dragOk)
-            {
+            if (actionSupported && dragOk) {
                 support.setDropAction(action);
                 return true;
             }
@@ -747,11 +723,9 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
             return false;
         }
 
-        public boolean importData(TransferHandler.TransferSupport support)
-        {
+        public boolean importData(TransferHandler.TransferSupport support) {
             // if we can't handle the import, say so
-            if (!canImport(support))
-            {
+            if (!canImport(support)) {
                 return false;
             }
 
@@ -760,14 +734,10 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
             // get the abstract entity
             String abstractEntity = dl.getPath().getLastPathComponent().toString();
 
-            try
-            {
-                if ( multipleConcreteEntitiesDropped )
-                {
-                    for ( int i = 0; i < entities.length; i++ )
-                    {
-                        switch (entityType)
-                        {
+            try {
+                if (multipleConcreteEntitiesDropped) {
+                    for (int i = 0; i < entities.length; i++) {
+                        switch (entityType) {
                             case AbstractOrbacPolicy.TYPE_ROLE:
                                 thisContext.thePolicy.Empower(thisContext.currentOrganization, entities[i], abstractEntity);
                                 break;
@@ -781,108 +751,99 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
                     }
                     // refresh abstract entity panel
                     DisplayEntityInformation(abstractEntity);
-                }
-                else if(toolBoxItemDropped)
-                {
+                } else if (toolBoxItemDropped) {
                     // first check if the tool has been dropped on an existing abstract entity or
                     // the root of the tree
-                    if ( abstractEntity.contains("All ") )
+                    if (abstractEntity.contains("All ")) {
                         abstractEntity = null;
+                    }
                     // create selected abstract entity
-                    if ( entityType == AbstractOrbacPolicy.TYPE_ROLE )
-                    {
+                    if (entityType == AbstractOrbacPolicy.TYPE_ROLE) {
                         AddRole(abstractEntity);
-                    }
-                    else if ( entityType == AbstractOrbacPolicy.TYPE_ACTIVITY )
-                    {
+                    } else if (entityType == AbstractOrbacPolicy.TYPE_ACTIVITY) {
                         AddActivity(abstractEntity);
-                    }
-                    else if ( entityType == AbstractOrbacPolicy.TYPE_VIEW )
-                    {
+                    } else if (entityType == AbstractOrbacPolicy.TYPE_VIEW) {
                         AddView(abstractEntity);
                     }
-                }
-                else if ( toolBoxRuleDropped )
-                {
+                } else if (toolBoxRuleDropped) {
                     jDialogCreateAbstractRule createRule = null;
-                    switch (draggedRuleType)
-                    {
+                    switch (draggedRuleType) {
                         case AbstractOrbacPolicy.TYPE_PERMISSION:
                             createRule = new jDialogCreateAbstractRule(findActiveFrame(), true,
-                                                                         thisContext.currentOrganization,
-                                                                         abstractEntity, null, null,
-                                                                         thisContext.thePolicy,
-                                                                         !thisContext.adorbacViewActive,
-                                                                         AbstractOrbacPolicy.TYPE_PERMISSION);
+                                    thisContext.currentOrganization,
+                                    abstractEntity, null, null,
+                                    thisContext.thePolicy,
+                                    !thisContext.adorbacViewActive,
+                                    AbstractOrbacPolicy.TYPE_PERMISSION);
                             createRule.setLocationRelativeTo(findActiveFrame());
                             NewMotorbacApp.getApplication().show(createRule);
 
-                            if ( createRule.canceled )
+                            if (createRule.canceled) {
                                 return false;
+                            }
 
                             // create the rule
                             thisContext.thePolicy.AbstractPermission(thisContext.currentOrganization,
-                                                                      createRule.GetFirstEntity(),
-                                                                      createRule.GetSecondEntity(),
-                                                                      createRule.GetThirdEntity(),
-                                                                      createRule.GetContext(),
-                                                                      createRule.GetRuleName());
+                                    createRule.GetFirstEntity(),
+                                    createRule.GetSecondEntity(),
+                                    createRule.GetThirdEntity(),
+                                    createRule.GetContext(),
+                                    createRule.GetRuleName());
                             break;
                         case AbstractOrbacPolicy.TYPE_PROHIBITION:
                             createRule = new jDialogCreateAbstractRule(findActiveFrame(), true,
-                                                                         thisContext.currentOrganization,
-                                                                         null, abstractEntity, null,
-                                                                         thisContext.thePolicy,
-                                                                         !thisContext.adorbacViewActive,
-                                                                         AbstractOrbacPolicy.TYPE_PROHIBITION);
+                                    thisContext.currentOrganization,
+                                    null, abstractEntity, null,
+                                    thisContext.thePolicy,
+                                    !thisContext.adorbacViewActive,
+                                    AbstractOrbacPolicy.TYPE_PROHIBITION);
                             createRule.setLocationRelativeTo(findActiveFrame());
                             NewMotorbacApp.getApplication().show(createRule);
 
-                            if ( createRule.canceled )
+                            if (createRule.canceled) {
                                 return false;
+                            }
 
                             // create the rule
                             thisContext.thePolicy.AbstractProhibition(thisContext.currentOrganization,
-                                                                      createRule.GetFirstEntity(),
-                                                                      createRule.GetSecondEntity(),
-                                                                      createRule.GetThirdEntity(),
-                                                                      createRule.GetContext(),
-                                                                      createRule.GetRuleName());
+                                    createRule.GetFirstEntity(),
+                                    createRule.GetSecondEntity(),
+                                    createRule.GetThirdEntity(),
+                                    createRule.GetContext(),
+                                    createRule.GetRuleName());
                             break;
                         case AbstractOrbacPolicy.TYPE_OBLIGATION:
                             createRule = new jDialogCreateAbstractRule(findActiveFrame(), true,
-                                                                         thisContext.currentOrganization,
-                                                                         null, null, abstractEntity,
-                                                                         thisContext.thePolicy,
-                                                                         !thisContext.adorbacViewActive,
-                                                                         AbstractOrbacPolicy.TYPE_OBLIGATION);
+                                    thisContext.currentOrganization,
+                                    null, null, abstractEntity,
+                                    thisContext.thePolicy,
+                                    !thisContext.adorbacViewActive,
+                                    AbstractOrbacPolicy.TYPE_OBLIGATION);
                             createRule.setLocationRelativeTo(findActiveFrame());
                             NewMotorbacApp.getApplication().show(createRule);
 
-                            if ( createRule.canceled )
+                            if (createRule.canceled) {
                                 return false;
+                            }
 
                             // create the rule
                             thisContext.thePolicy.AbstractObligation(thisContext.currentOrganization,
-                                                                     createRule.GetFirstEntity(),
-                                                                     createRule.GetSecondEntity(),
-                                                                     createRule.GetThirdEntity(),
-                                                                     createRule.GetContext(),
-                                                                     createRule.GetViolationContext(),
-                                                                     createRule.GetRuleName());
+                                    createRule.GetFirstEntity(),
+                                    createRule.GetSecondEntity(),
+                                    createRule.GetThirdEntity(),
+                                    createRule.GetContext(),
+                                    createRule.GetViolationContext(),
+                                    createRule.GetRuleName());
                             break;
                     }
 
                     // update abstract rule tab
                     thisContext.panelAbstractRules.UpdateTabs();
-                }
-                else
-                {
+                } else {
                     // get the concrete entity and bail if this fails
-                    String concreteEntity = (String)support.getTransferable().getTransferData(DataFlavor.stringFlavor);
+                    String concreteEntity = (String) support.getTransferable().getTransferData(DataFlavor.stringFlavor);
                     // all ok, we assoeciate the conrete entity and the abstract entity and refresh
-                    switch (entityType)
-                    {
+                    switch (entityType) {
                         case AbstractOrbacPolicy.TYPE_ROLE:
                             thisContext.thePolicy.Empower(thisContext.currentOrganization, concreteEntity, abstractEntity);
                             thisContext.panelSubjects.SetSelectedEntity(concreteEntity);
@@ -903,35 +864,26 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
 
                 // push policy on undo/redo stack
                 thisContext.panelPolicy.PushPolicy();
-            }
-            catch (UnsupportedFlavorException e) {
+            } catch (UnsupportedFlavorException e) {
                 return false;
-            }
-            catch (java.io.IOException e) {
+            } catch (java.io.IOException e) {
                 return false;
-            }
-            catch ( CViolatedEntityDefinitionException vee )
-            {
+            } catch (CViolatedEntityDefinitionException vee) {
                 // violated entity definition
                 JOptionPane.showMessageDialog(null, vee.getMessage());
                 return false;
-            }
-            catch ( CViolatedConstraintException vce )
-            {
+            } catch (CViolatedConstraintException vce) {
                 // violated separation constraint
                 String mess = "";
                 mess += vce.getMessage() + ":\n";
                 Iterator<?> isc = vce.GetInformation().iterator();
-                while ( isc.hasNext() )
-                {
-                        CSeparationConstraint sc = (CSeparationConstraint)isc.next();
-                        mess += sc.GetFirstEntity() + " is separated with " + sc.GetSecondEntity() + "\n";
+                while (isc.hasNext()) {
+                    CSeparationConstraint sc = (CSeparationConstraint) isc.next();
+                    mess += sc.GetFirstEntity() + " is separated with " + sc.GetSecondEntity() + "\n";
                 }
                 JOptionPane.showMessageDialog(null, mess);
                 return false;
-            }
-            catch (COrbacException e)
-            {
+            } catch (COrbacException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, e.getMessage());
                 return false;
@@ -940,67 +892,98 @@ public class PanelAbstractEntity extends javax.swing.JPanel implements ActionLis
             return true;
         }
     }
-    
+
     // If expand is true, expands all nodes in the tree
     // otherwise, collapses all nodes in the tree
-    public void expandAll(JTree tree, boolean expand)
-    {
-        TreeNode root = (TreeNode)tree.getModel().getRoot();
+    public void expandAll(JTree tree, boolean expand) {
+        TreeNode root = (TreeNode) tree.getModel().getRoot();
 
         // Traverse tree from root
         expandAll(tree, new TreePath(root), expand);
     }
-    private void expandAll(JTree tree, TreePath parent, boolean expand)
-    {
+
+    private void expandAll(JTree tree, TreePath parent, boolean expand) {
         // Traverse children
-        TreeNode node = (TreeNode)parent.getLastPathComponent();
-        if (node.getChildCount() >= 0)
-        {
-            for (Enumeration<?> e=node.children(); e.hasMoreElements(); )
-            {
-                TreeNode n = (TreeNode)e.nextElement();
+        TreeNode node = (TreeNode) parent.getLastPathComponent();
+        if (node.getChildCount() >= 0) {
+            for (Enumeration<?> e = node.children(); e.hasMoreElements();) {
+                TreeNode n = (TreeNode) e.nextElement();
                 TreePath path = parent.pathByAddingChild(n);
                 expandAll(tree, path, expand);
             }
         }
 
         // Expansion or collapse must be done bottom-up
-        if (expand) tree.expandPath(parent);
-        else tree.collapsePath(parent);
+        if (expand) {
+            tree.expandPath(parent);
+        } else {
+            tree.collapsePath(parent);
+        }
     }
     // helper function to find a frame object to display a dialog box for example
-    private Frame findActiveFrame()
-    {
+
+    private Frame findActiveFrame() {
         Frame[] frames = JFrame.getFrames();
-        for (int i = 0; i < frames.length; i++)
-        {
+        for (int i = 0; i < frames.length; i++) {
             Frame frame = frames[i];
-            if (frame.isVisible())
-            {
+            if (frame.isVisible()) {
                 return frame;
             }
         }
         return null;
     }
     // popup menu mouse handler
-    class PopupListener extends MouseAdapter
-    {
-        public void mousePressed(MouseEvent e) { maybeShowPopup(e); }
-        public void mouseReleased(MouseEvent e) { maybeShowPopup(e); }
 
-        private void maybeShowPopup(MouseEvent e)
-        {
-            if (e.isPopupTrigger())
-            {
+    class PopupListener extends MouseAdapter {
+        
+        private ActionListener parent;
+        
+        public PopupListener(ActionListener parent){
+            this.parent = parent;
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        private void maybeShowPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
                 // the event source is the organization tree
                 TreePath tp = jTreeEntityHierarchy.getPathForLocation(e.getX(), e.getY());
-                if ( tp == null ) return;
-                DefaultMutableTreeNode n = (DefaultMutableTreeNode)tp.getLastPathComponent();
-		jTreeEntityHierarchy.setSelectionPath(jTreeEntityHierarchy.getPathForLocation(e.getX(), e.getY()));
-                
+                if (tp == null) {
+                    return;
+                }
+                DefaultMutableTreeNode n = (DefaultMutableTreeNode) tp.getLastPathComponent();
+                jTreeEntityHierarchy.setSelectionPath(jTreeEntityHierarchy.getPathForLocation(e.getX(), e.getY()));
+
                 // disable some menu entries if the abstract entity tree root is selected
-                editEntityMenuItem.setEnabled( !n.toString().contains("All ") );
-                deleteEntityMenuItem.setEnabled( !n.toString().contains("All ") );
+                editEntityMenuItem.setEnabled(!n.toString().contains("All "));
+                deleteEntityMenuItem.setEnabled(!n.toString().contains("All "));
+
+
+                // possibly multiple selections
+                int[] selectedItems = jTreeEntityHierarchy.getSelectionRows();
+                if (selectedItems.length > 0 && thisContext.currentOrganization != null) {
+                    try {
+                        // generate menu for multiple items
+                        assignClass.removeAll();
+                        Set<String> classes = thisContext.thePolicy.GetAbstractClassesList();
+                        for (String c : classes) {
+                            JMenuItem mi = new JMenuItem(c);
+                            mi.addActionListener(this.parent);
+                            assignClass.add(mi);
+                        }
+                    } catch (COrbacException ex) {
+                        Logger.getLogger(PanelAbstractEntity.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
 
                 popupMenu.show(e.getComponent(), e.getX(), e.getY());
             }
