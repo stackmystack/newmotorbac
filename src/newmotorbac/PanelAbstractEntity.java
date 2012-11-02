@@ -33,13 +33,11 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.border.TitledBorder;
@@ -77,6 +75,7 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
     private JMenuItem editEntityMenuItem;
     private JMenuItem deleteEntityMenuItem;
     private JMenu assignClass;
+    private JMenu revokeClass;
     private MyTableModel tableModel = new MyTableModel();
     // used to have a more compact code
     String[] entityTypes = {"role", "activity", "view"};
@@ -87,13 +86,16 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
      */
     public PanelAbstractEntity(OrbacPolicyContext thisContext, int entityType) {
         initComponents();
-        
+
         assignClass = new JMenu("Assign class");
         assignClass.addActionListener(this);
 
+        revokeClass = new JMenu("Revoke Class");
+        revokeClass.addActionListener(this);
+
         // setup tree transfer handler for drag and drop
         jTreeEntityHierarchy.setTransferHandler(new ToTransferHandler(TransferHandler.COPY));
-        
+
         // setup tree renderer
         URL url1 = NewMotorbacView.class.getResource("/newmotorbac/resources/" + entityTypes[entityType] + "_new.png");
         if (url1 != null) {
@@ -135,6 +137,7 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
         popupMenu.add(editEntityMenuItem);
         popupMenu.add(deleteEntityMenuItem);
         popupMenu.add(assignClass);
+        popupMenu.add(revokeClass);
         addEntityMenuItem.addActionListener(this);
         editEntityMenuItem.addActionListener(this);
         deleteEntityMenuItem.addActionListener(this);
@@ -157,8 +160,8 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
             // get selected abstract entity in the tree
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTreeEntityHierarchy.getLastSelectedPathComponent();
             String selectedEntity = (node == null) ? null : node.toString();
-            
-            if(selectedEntity == null) {
+
+            if (selectedEntity == null) {
                 return;
             }
             try {
@@ -283,6 +286,19 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
                 } else if (source.getParent() == assignClass.getPopupMenu()) {
                     try {
                         thisContext.thePolicy.AssignAbstractEntityToClass(selectedEntity, source.getText());
+
+                        // refresh selected entity information
+                        RefreshSelectedEntityInformation();
+
+                        // save the modified policy in history if operation is successful
+                        thisContext.panelPolicy.PushPolicy();
+                    } catch (COrbacException e) {
+                        System.out.println("actionPerformed():" + e);
+                        e.printStackTrace();
+                    }
+                } else if (source.getParent() == revokeClass.getPopupMenu()) {
+                    try {
+                        thisContext.thePolicy.UnassignAbstractEntityToClass(selectedEntity, source.getText());
 
                         // refresh selected entity information
                         RefreshSelectedEntityInformation();
@@ -1012,6 +1028,19 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
                     } catch (COrbacException ex) {
                         Logger.getLogger(PanelAbstractEntity.class.getName()).log(Level.SEVERE, null, ex);
                     }
+
+                    try {
+                        // generate menu for multiple items
+                        revokeClass.removeAll();
+                        Set<String> classes = thisContext.thePolicy.GetAbstractEntityClasses(((DefaultMutableTreeNode) jTreeEntityHierarchy.getLastSelectedPathComponent()).toString());
+                        for (String c : classes) {
+                            JMenuItem mi = new JMenuItem(c);
+                            mi.addActionListener(this.parent);
+                            revokeClass.add(mi);
+                        }
+                    } catch (COrbacException ex) {
+                        Logger.getLogger(PanelAbstractEntity.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 popupMenu.show(e.getComponent(), e.getX(), e.getY());
             }
@@ -1028,7 +1057,7 @@ public class PanelAbstractEntity extends JPanel implements ActionListener {
         private String[] attributesValues = new String[0];
         // concrete entity associated with this data
         private String associatedEntity = "";
-        
+
         public void SetData(Map<String, String> dataMap, String associatedEntity) {
             // store entity name
             this.associatedEntity = associatedEntity;
