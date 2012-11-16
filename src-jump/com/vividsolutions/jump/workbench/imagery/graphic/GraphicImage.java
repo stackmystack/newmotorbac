@@ -71,7 +71,6 @@ import java.io.File;
 import javax.media.jai.RenderedOp;
 import javax.media.jai.operator.FileLoadDescriptor;
 
-import com.sun.image.codec.jpeg.JPEGDecodeParam;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jump.feature.Feature;
 import com.vividsolutions.jump.workbench.imagery.ReferencedImage;
@@ -277,11 +276,11 @@ public class GraphicImage
           image_h += (topOffset + botOffset);
           
           int jpg_colorspace = image.getColorModel().getColorSpace().getType();
-          if (jpg_colorspace != JPEGDecodeParam.COLOR_ID_GRAY)
-          {
+//          if (jpg_colorspace != JPEGDecodeParam.COLOR_ID_GRAY)
+//          {
               RenderingHints rh = new RenderingHints(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
               g.setRenderingHints(rh);
-          }
+//          }
           
           //parameters: destination corners then source corners
           //source corners are defined in terms of infinitely thin coordinates

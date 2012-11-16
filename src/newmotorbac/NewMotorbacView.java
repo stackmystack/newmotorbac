@@ -3,6 +3,10 @@
  */
 package newmotorbac;
 
+import com.vividsolutions.jump.feature.FeatureCollection;
+import com.vividsolutions.jump.io.DriverProperties;
+import com.vividsolutions.jump.io.IllegalParametersException;
+import com.vividsolutions.jump.io.JMLReader;
 import java.awt.HeadlessException;
 import newmotorbac.dialog.jDialogCreatePolicy;
 import org.jdesktop.application.Action;
@@ -20,6 +24,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javax.swing.Timer;
 import javax.swing.Icon;
@@ -29,11 +35,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import orbac.COrbacCore;
 import orbac.OrbacPolicyFactory;
 import orbac.exception.COrbacException;
 import org.jdesktop.application.Application.ExitListener;
+import org.jdesktop.application.Task;
 
 /**
  * The application's main frame.
@@ -45,7 +53,6 @@ public class NewMotorbacView extends FrameView implements ActionListener {
     // list of policies present in the mru menu while application is running
     private List<String> mruList = new LinkedList();
     private final int maxMruSize = 10;
-    
     // orbac related members
     // the motorbac core
     private COrbacCore core;
@@ -59,7 +66,6 @@ public class NewMotorbacView extends FrameView implements ActionListener {
 
         // change the exit event listener so that the default behaviour is changed
         app.addExitListener(new ExitListener() {
-
             @Override
             public boolean canExit(EventObject e) {
                 return Exit();
@@ -93,7 +99,7 @@ public class NewMotorbacView extends FrameView implements ActionListener {
         }
         // initialize OrBAC core
         core = COrbacCore.GetTheInstance(absPath);
-        
+
         // set application icon
         URL imgURL = NewMotorbacView.class.getResource("/newmotorbac/resources/orbee.png");
 
@@ -106,7 +112,6 @@ public class NewMotorbacView extends FrameView implements ActionListener {
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
         messageTimer = new Timer(messageTimeout, new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 statusMessageLabel.setText("");
@@ -118,7 +123,6 @@ public class NewMotorbacView extends FrameView implements ActionListener {
             busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
         }
         busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
@@ -132,7 +136,6 @@ public class NewMotorbacView extends FrameView implements ActionListener {
         // connecting action tasks to status bar via TaskMonitor
         TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
         taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-
             @Override
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 String propertyName = evt.getPropertyName();
@@ -164,16 +167,14 @@ public class NewMotorbacView extends FrameView implements ActionListener {
 
         // disable controls related to policy state since no policy exist yet
         SetPolicyStateReleatedButtonsStates(false);
-        
+
         // restore recent opened policies list
-        for ( int i = 0; i < maxMruSize; i++ )
-        {
+        for (int i = 0; i < maxMruSize; i++) {
             String policy = mruPersistence.get("mru" + i, "");
-            if ( policy.equals("") == false )
-            {
-            JMenuItem mi = new JMenuItem(policy);
-            mi.addActionListener(this);
-            jMenuRecentPolicies.add(mi);
+            if (policy.equals("") == false) {
+                JMenuItem mi = new JMenuItem(policy);
+                mi.addActionListener(this);
+                jMenuRecentPolicies.add(mi);
                 jMenuRecentPolicies.add(mi);
                 mruList.add(policy);
             }
@@ -192,38 +193,35 @@ public class NewMotorbacView extends FrameView implements ActionListener {
         NewMotorbacApp.getApplication().show(aboutBox);
     }
 
-    private void LoadPolicyFile(File file) throws HeadlessException 
-    {
+    private void LoadPolicyFile(File file) throws HeadlessException {
         // the PanelPolicy class constructor loads the file
         // we create a new policy panel and add it to the main tabbed pane
-        try
-        {
+        try {
             PanelPolicy newPolicyPanel = new PanelPolicy(file, this);
             jTabbedPanePolicies.addTab(newPolicyPanel.GetPolicy().GetName(), newPolicyPanel);
             jTabbedPanePolicies.setSelectedComponent(newPolicyPanel);
-            
+
             // opening was successful, update mru list
-            if ( mruList.size() == maxMruSize )
+            if (mruList.size() == maxMruSize) {
                 mruList.remove(maxMruSize - 1);
+            }
             mruList.add(0, file.getAbsolutePath());
-            
+
             // modify GUI state
             SetPolicyStateReleatedButtonsStates(true);
             RefreshToolbar(newPolicyPanel);
             RefreshMenuItems(newPolicyPanel);
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             System.out.println(e);
             e.printStackTrace();
             JOptionPane.showMessageDialog(getFrame(), e, "Error while creating new policy", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -253,6 +251,7 @@ public class NewMotorbacView extends FrameView implements ActionListener {
         jMenuItemNew = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItemClose = new javax.swing.JMenuItem();
+        jMenuItemAddLayer = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         jMenuItemOpen = new javax.swing.JMenuItem();
         jMenuRecentPolicies = new javax.swing.JMenu();
@@ -510,6 +509,11 @@ public class NewMotorbacView extends FrameView implements ActionListener {
         jSeparator3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jSeparator3.setName("jSeparator3"); // NOI18N
         fileMenu.add(jSeparator3);
+        
+        //This is a complete spaghetti hack!! I am on Netbeans 7.2 and the fuckers do not support visual editor anymore!
+        jMenuItemAddLayer.setAction(actionMap.get("addLayer"));
+        jMenuItemAddLayer.setText("Add Layer");
+        fileMenu.add(jMenuItemAddLayer);
 
         jMenuItemOpen.setAction(actionMap.get("openPolicy")); // NOI18N
         jMenuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
@@ -773,13 +777,15 @@ public class NewMotorbacView extends FrameView implements ActionListener {
             chooser.setDialogTitle("Save policy");
             // set the file extension type that will be displayed according to the policy type
             OrbacPolicyFactory f = core.GetFactory(policyPanel.GetPolicy().getClass());
-            
+
             FileNameExtensionFilter sdfFilter = new FileNameExtensionFilter(f.GetPolicyType() + " policy files (*." + f.GetFileExtension() + ")", f.GetFileExtension());
             chooser.addChoosableFileFilter(sdfFilter);
             chooser.setFileFilter(sdfFilter);
 
             // get the result of the file chooser
-            if ( chooser.showSaveDialog(getFrame()) == JFileChooser.CANCEL_OPTION ) return false;
+            if (chooser.showSaveDialog(getFrame()) == JFileChooser.CANCEL_OPTION) {
+                return false;
+            }
             // get the selected file
             File file = chooser.getSelectedFile();
 
@@ -800,25 +806,25 @@ public class NewMotorbacView extends FrameView implements ActionListener {
     public void RefreshMenuItems(PanelPolicy selectedPolicyTab) {
         jMenuItemClass.setEnabled(true);
         jMenuItemClose.setEnabled(true);
+        jMenuItemAddLayer.setEnabled(true);
         jMenuItemPlugins.setEnabled(true);
         jMenuItemProperties.setEnabled(true);
         jMenuItemRedo.setEnabled(selectedPolicyTab.CanRedo());
         jMenuItemSave.setEnabled(selectedPolicyTab.CanBeSaved());
         jMenuItemSaveAs.setEnabled(true);
         jMenuItemUndo.setEnabled(selectedPolicyTab.CanUndo());
-        
+
         // refresh mru menu
         jMenuRecentPolicies.removeAll();
         // before generating menu, we make sure no policy is present more than once in the mru list
         List<String> newMruList = new LinkedList();
-        for ( String p : mruList )
-        {
-            if ( newMruList.contains(p) == false )
+        for (String p : mruList) {
+            if (newMruList.contains(p) == false) {
                 newMruList.add(p);
+            }
         }
         mruList = newMruList;
-        for ( String p : mruList )
-        {
+        for (String p : mruList) {
             JMenuItem mi = new JMenuItem(p);
             mi.addActionListener(this);
             jMenuRecentPolicies.add(mi);
@@ -826,14 +832,11 @@ public class NewMotorbacView extends FrameView implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(java.awt.event.ActionEvent evt)
-    {
+    public void actionPerformed(java.awt.event.ActionEvent evt) {
         // this method only deals with events on the mru menu
-        if ( evt.getSource() instanceof JMenuItem )
-        {
-            JMenuItem i = (JMenuItem)evt.getSource();
-            if ( i.getParent() == jMenuRecentPolicies.getPopupMenu() )
-            {
+        if (evt.getSource() instanceof JMenuItem) {
+            JMenuItem i = (JMenuItem) evt.getSource();
+            if (i.getParent() == jMenuRecentPolicies.getPopupMenu()) {
                 // open selected file
                 LoadPolicyFile(new File(i.getText()));
             }
@@ -878,6 +881,7 @@ public class NewMotorbacView extends FrameView implements ActionListener {
         // entries in the menu
         jMenuItemClass.setEnabled(true);
         jMenuItemClose.setEnabled(true);
+        jMenuItemAddLayer.setEnabled(true);
         jMenuItemExport.setEnabled(true);
         jMenuItemPlugins.setEnabled(true);
         jMenuItemProperties.setEnabled(true);
@@ -990,26 +994,74 @@ public class NewMotorbacView extends FrameView implements ActionListener {
         // get the file extension types that will be displayed
         Set<OrbacPolicyFactory> factories = core.GetSupportedPolicyFactories();
         Iterator<OrbacPolicyFactory> ifactories = factories.iterator();
-        while ( ifactories.hasNext() )
-        {
+        while (ifactories.hasNext()) {
             OrbacPolicyFactory f = ifactories.next();
-                    
-            FileNameExtensionFilter sdfFilter = new FileNameExtensionFilter(f.GetPolicyType() +" files (*." + f.GetFileExtension() + ")", f.GetFileExtension());
+
+            FileNameExtensionFilter sdfFilter = new FileNameExtensionFilter(f.GetPolicyType() + " files (*." + f.GetFileExtension() + ")", f.GetFileExtension());
             chooser.addChoosableFileFilter(sdfFilter);
             chooser.setFileFilter(sdfFilter);
         }
-        
+
         // get the result of the file chooser
         if (chooser.showOpenDialog(getFrame()) == JFileChooser.CANCEL_OPTION) {
             return;
         }
         // get the selected file
         File file = chooser.getSelectedFile();
-        
+
         // load policy
         LoadPolicyFile(file);
     }
 
+    @Action(block = Task.BlockingScope.APPLICATION)
+    public void addLayer() {
+        JFileChooser fc = new JFileChooser();
+        fc.setMultiSelectionEnabled(true);
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+        FileFilter jmlFilter = new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                if (f.getName().trim().endsWith(".jml")) {
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public String getDescription() {
+                return "JML files (*.jml)";
+            }
+        };
+
+        fc.setFileFilter(jmlFilter);
+
+        int returnVal = fc.showOpenDialog(this.getComponent());
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File[] files = fc.getSelectedFiles();
+            if (files.length == 0) {
+                return;
+            }
+            JMLReader reader = new JMLReader();
+            DriverProperties props = new DriverProperties();
+            for (File f : files) {
+                props.clear();
+                try {
+                    props.put("File", f.getCanonicalFile().toString());
+                    FeatureCollection collection = reader.read(props);
+                    System.out.println(collection);
+                } catch (IllegalParametersException ex) {
+                    Logger.getLogger(NewMotorbacView.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(NewMotorbacView.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(NewMotorbacView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }
+    
     // disable/enable buttons related to policy state
     private void SetPolicyStateReleatedButtonsStates(boolean state) {
         // buttons
@@ -1029,6 +1081,7 @@ public class NewMotorbacView extends FrameView implements ActionListener {
         // disable entries in the menu
         jMenuItemClass.setEnabled(state);
         jMenuItemClose.setEnabled(state);
+        jMenuItemAddLayer.setEnabled(state);
         jMenuItemPlugins.setEnabled(state);
         jMenuItemProperties.setEnabled(state);
         jMenuItemRedo.setEnabled(state);
@@ -1169,12 +1222,12 @@ public class NewMotorbacView extends FrameView implements ActionListener {
     }
 
     // called when the exit button or the exit menu item are clicked
-    private boolean Exit()
-    {
+    private boolean Exit() {
         // save mru file list state
-        for ( int i = 0; i < mruList.size(); i++ )
+        for (int i = 0; i < mruList.size(); i++) {
             mruPersistence.put("mru" + i, mruList.get(i));
-        
+        }
+
         // first check if some policies should be saved because they have been modified since last save
         for (int i = 0; i < jTabbedPanePolicies.getTabCount(); i++) {
             // get tab
@@ -1196,12 +1249,10 @@ public class NewMotorbacView extends FrameView implements ActionListener {
     }
 
     @Action
-    public void ExportPolicy() 
-    {
-        PanelPolicy selectedPolicyTab = (PanelPolicy)jTabbedPanePolicies.getSelectedComponent();
+    public void ExportPolicy() {
+        PanelPolicy selectedPolicyTab = (PanelPolicy) jTabbedPanePolicies.getSelectedComponent();
         selectedPolicyTab.ExportPolicy();
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAdorbacView;
     private javax.swing.JButton jButtonChangeAdorbacUser;
@@ -1224,6 +1275,7 @@ public class NewMotorbacView extends FrameView implements ActionListener {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuItem jMenuItemClass;
     private javax.swing.JMenuItem jMenuItemClose;
+    private javax.swing.JMenuItem jMenuItemAddLayer;
     private javax.swing.JMenuItem jMenuItemExport;
     private javax.swing.JMenuItem jMenuItemNew;
     private javax.swing.JMenuItem jMenuItemOnlineManual;
@@ -1249,12 +1301,10 @@ public class NewMotorbacView extends FrameView implements ActionListener {
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
     // End of variables declaration//GEN-END:variables
-
     private final Timer messageTimer;
     private final Timer busyIconTimer;
     private final Icon idleIcon;
     private final Icon[] busyIcons = new Icon[15];
     private int busyIconIndex = 0;
-
     private JDialog aboutBox;
 }

@@ -33,9 +33,6 @@
 
 package com.vividsolutions.jump.workbench;
 
-import javax.swing.JInternalFrame;
-
-import sun.security.action.GetBooleanAction;
 
 import com.vividsolutions.jump.util.Blackboard;
 import com.vividsolutions.jump.workbench.driver.DriverManager;
@@ -47,8 +44,8 @@ import com.vividsolutions.jump.workbench.ui.LayerNamePanel;
 import com.vividsolutions.jump.workbench.ui.LayerNamePanelProxy;
 import com.vividsolutions.jump.workbench.ui.LayerViewPanel;
 import com.vividsolutions.jump.workbench.ui.LayerViewPanelProxy;
-import com.vividsolutions.jump.workbench.ui.TaskFrame;
 import com.vividsolutions.jump.workbench.ui.TaskFrameProxy;
+import javax.swing.JInternalFrame;
 
 
 /**
