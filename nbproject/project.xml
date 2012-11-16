@@ -5,6 +5,7 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>newmotorbac</name>
             <source-roots>
+                <root id="src.src-jump.dir" name="JUMP Source"/>
                 <root id="src.dir"/>
             </source-roots>
             <test-roots/>
